@@ -62,6 +62,12 @@ function formatDate(dateString: string): string {
 export default function LeadsPage() {
   const [leads, setLeads] = useState<Lead[]>([])
   const [loading, setLoading] = useState(true)
+  const [temperatureStats, setTemperatureStats] = useState({
+    hot: 0,
+    warm: 0,
+    cold: 0,
+    total: 0
+  })
 
   useEffect(() => {
     async function loadLeads() {
@@ -167,7 +173,7 @@ export default function LeadsPage() {
                       <p className="text-sm text-gray-600">{lead.phone}</p>
                     </div>
                     <div className="ml-3 flex-shrink-0">
-                      {getStatusBadge(lead.status)}
+                      {getTemperatureBadge((lead as any).temperature || 'WARM')}
                     </div>
                   </div>
                   
@@ -205,7 +211,7 @@ export default function LeadsPage() {
                         Property
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        Temperature
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Date
@@ -232,7 +238,7 @@ export default function LeadsPage() {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {getStatusBadge(lead.status)}
+                          {getTemperatureBadge((lead as any).temperature || 'WARM')}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(lead.created_at)}
