@@ -8,15 +8,22 @@ import type { PropertyType, PropertyStatus } from '@/lib/types/database'
 const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
   { value: 'HOUSE_LOT', label: 'House & Lot' },
   { value: 'CONDOMINIUM', label: 'Condominium' },
+  { value: 'APARTMENT', label: 'Apartment' },
   { value: 'LOT_ONLY', label: 'Lot Only' },
   { value: 'COMMERCIAL', label: 'Commercial' },
   { value: 'OTHER', label: 'Other' },
+]
+
+const LISTING_TYPES = [
+  { value: 'FOR_SALE', label: 'For Sale' },
+  { value: 'FOR_RENT', label: 'For Rent' },
 ]
 
 // Dynamic fields based on property type
 const PROPERTY_FIELDS = {
   HOUSE_LOT: ['bedrooms', 'bathrooms', 'garage', 'lotArea', 'floorArea'],
   CONDOMINIUM: ['bedrooms', 'bathrooms', 'floorNumber', 'unitNumber', 'parkingSlots'],
+  APARTMENT: ['bedrooms', 'bathrooms', 'floorNumber', 'unitNumber'],
   LOT_ONLY: ['lotArea', 'titleType'],
   COMMERCIAL: ['floorArea', 'parking', 'floors'],
   OTHER: [],
@@ -34,6 +41,7 @@ export default function NewPropertyPage() {
   const [property, setProperty] = useState({
     title: '',
     property_type: 'HOUSE_LOT' as PropertyType,
+    listing_type: 'FOR_SALE',
     price: '',
     location: '',
     description: '',
@@ -175,7 +183,7 @@ export default function NewPropertyPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Property Type *
                 </label>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {PROPERTY_TYPES.map((type) => (
                     <button
                       key={type.value}
@@ -183,6 +191,28 @@ export default function NewPropertyPage() {
                       onClick={() => setProperty({ ...property, property_type: type.value })}
                       className={`p-3 rounded-lg border-2 text-center transition-colors ${
                         property.property_type === type.value
+                          ? 'border-[#1877F2] bg-blue-50'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="text-sm font-medium text-gray-900">{type.label}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Listing Type *
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  {LISTING_TYPES.map((type) => (
+                    <button
+                      key={type.value}
+                      type="button"
+                      onClick={() => setProperty({ ...property, listing_type: type.value })}
+                      className={`p-3 rounded-lg border-2 text-center transition-colors ${
+                        property.listing_type === type.value
                           ? 'border-[#1877F2] bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
@@ -205,7 +235,7 @@ export default function NewPropertyPage() {
 
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-                  Price (PHP) *
+                  {property.listing_type === 'FOR_RENT' ? 'Monthly Rent (PHP) *' : 'Price (PHP) *'}
                 </label>
                 <input
                   type="number"
@@ -214,10 +244,13 @@ export default function NewPropertyPage() {
                   min="0"
                   step="0.01"
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                  placeholder="5000000"
+                  placeholder={property.listing_type === 'FOR_RENT' ? '15000' : '5000000'}
                   value={property.price}
                   onChange={(e) => setProperty({ ...property, price: e.target.value })}
                 />
+                {property.listing_type === 'FOR_RENT' && (
+                  <p className="mt-1 text-xs text-gray-500">Monthly rental price</p>
+                )}
               </div>
 
               <div>

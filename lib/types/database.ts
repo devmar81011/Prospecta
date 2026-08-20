@@ -12,7 +12,7 @@ export type Profile = {
   updated_at: string;
 }
 
-export type PropertyType = 'HOUSE_LOT' | 'CONDOMINIUM' | 'LOT_ONLY' | 'COMMERCIAL' | 'OTHER';
+export type PropertyType = 'HOUSE_LOT' | 'CONDOMINIUM' | 'APARTMENT' | 'LOT_ONLY' | 'COMMERCIAL' | 'OTHER';
 export type PropertyStatus = 'DRAFT' | 'ACTIVE' | 'RESERVED' | 'SOLD' | 'INACTIVE';
 
 export type Property = {
