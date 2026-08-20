@@ -16,6 +16,7 @@ interface Property {
   bedrooms?: number
   bathrooms?: number
   area?: number
+  cover_image?: string
 }
 
 function formatPrice(price: number): string {
@@ -158,59 +159,88 @@ export default function PropertiesPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {properties.map((property) => (
-              <div key={property.id} className="bg-white rounded-xl shadow-sm border hover:shadow-md transition-all overflow-hidden">
-                <div className="aspect-video bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-6xl">
-                  {property.property_type === 'house' || property.property_type === 'HOUSE_LOT' ? '🏠' : '🏢'}
+              <div key={property.id} className="bg-white rounded-lg shadow border border-gray-200 hover:shadow-lg transition-all overflow-hidden">
+                {/* Property Image */}
+                <div className="aspect-[4/3] bg-gray-200 overflow-hidden">
+                  {property.cover_image ? (
+                    <img 
+                      src={property.cover_image} 
+                      alt={property.title}
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-6xl">
+                      {property.property_type === 'house' || property.property_type === 'HOUSE_LOT' ? '🏠' : '🏢'}
+                    </div>
+                  )}
                 </div>
-                <div className="p-5">
-                  <div className="flex justify-between items-start mb-3">
+                
+                {/* Property Info */}
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">
+                      <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-2">
                         {property.title}
                       </h3>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-xs text-gray-500">
                         {getPropertyTypeLabel(property.property_type)}
                       </p>
                     </div>
                     <div className="ml-2 flex-shrink-0">{getStatusBadge(property.status)}</div>
                   </div>
 
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center">
-                      <span className="font-bold text-blue-600 text-xl">
+                  <div className="space-y-1.5 mb-3">
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-bold text-[#1877F2] text-lg">
                         {formatPrice(property.price)}
                       </span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <span className="mr-1">📍</span>
+                    <div className="flex items-center text-xs text-gray-600">
+                      <svg className="w-3 h-3 mr-1 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      </svg>
                       <span className="truncate">{property.location}</span>
                     </div>
                     {(property.bedrooms || property.bathrooms || property.area) && (
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
-                        {property.bedrooms && <span>🛏️ {property.bedrooms} bed</span>}
-                        {property.bathrooms && <span>🚿 {property.bathrooms} bath</span>}
+                      <div className="flex items-center gap-3 text-xs text-gray-500 pt-1">
+                        {property.bedrooms && (
+                          <span className="flex items-center gap-0.5">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                            </svg>
+                            {property.bedrooms}
+                          </span>
+                        )}
+                        {property.bathrooms && (
+                          <span className="flex items-center gap-0.5">
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M3 5a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2h-2.22l.123.489.804.804A1 1 0 0113 18H7a1 1 0 01-.707-1.707l.804-.804L7.22 15H5a2 2 0 01-2-2V5zm5.771 7H5V5h10v7H8.771z" clipRule="evenodd" />
+                            </svg>
+                            {property.bathrooms}
+                          </span>
+                        )}
                         {property.area && <span>📏 {property.area}m²</span>}
                       </div>
                     )}
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 border-t border-gray-100 pt-3">
                     <Link
                       href={`/dashboard/properties/${property.id}/edit`}
-                      className="block w-full text-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                      className="block w-full text-center px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700 transition-colors"
                     >
-                      ✏️ Edit Property
+                      ✏️ Edit
                     </Link>
                     {property.status === 'available' || property.status === 'ACTIVE' ? (
                       <>
                         <Link
                           href={`/p/${property.slug}`}
                           target="_blank"
-                          className="block w-full text-center px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                          className="block w-full text-center px-3 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-md text-sm font-semibold transition-colors"
                         >
-                          👁️ Preview Page
+                          👁️ Preview
                         </Link>
                         <div className="flex gap-2">
                           <button
@@ -219,7 +249,7 @@ export default function PropertiesPage() {
                               const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
                               window.open(fbUrl, '_blank', 'width=600,height=400')
                             }}
-                            className="flex-1 px-3 py-2 bg-[#1877F2] text-white rounded-lg text-sm font-medium hover:bg-[#166fe5] transition-colors flex items-center justify-center gap-1"
+                            className="flex-1 px-3 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-md text-sm font-semibold transition-colors flex items-center justify-center gap-1.5"
                           >
                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -230,9 +260,9 @@ export default function PropertiesPage() {
                             onClick={() => {
                               const url = `${window.location.origin}/p/${property.slug}`
                               navigator.clipboard.writeText(url)
-                              alert('✅ Link copied! Now paste it on Facebook.')
+                              alert('✅ Link copied! Paste it on Facebook.')
                             }}
-                            className="px-3 py-2 border-2 border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                            className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-lg transition-colors"
                             title="Copy link"
                           >
                             📋
@@ -240,8 +270,8 @@ export default function PropertiesPage() {
                         </div>
                       </>
                     ) : (
-                      <div className="text-center text-xs text-gray-500 py-2">
-                        Set status to "Active" to share
+                      <div className="text-center text-xs text-gray-500 py-2 bg-gray-50 rounded-md">
+                        Set to "Active" to share
                       </div>
                     )}
                   </div>

@@ -8,27 +8,26 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-white">
       {/* Navigation */}
-      <nav className="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-40">
+      <nav className="border-b border-gray-200 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center gap-2">
-              <div className="h-7 w-7 sm:h-8 sm:w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-base sm:text-lg">🏠</span>
+              <div className="h-8 w-8 sm:h-10 sm:w-10 bg-[#1877F2] rounded-full flex items-center justify-center shadow-md">
+                <span className="text-white text-xl sm:text-2xl font-bold">P</span>
               </div>
-              <span className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <span className="text-xl sm:text-2xl font-bold text-[#1877F2]">
                 Prospecta
               </span>
             </div>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <a href="/auth/login" className="text-gray-700 hover:text-gray-900 font-medium text-xs sm:text-sm px-2 sm:px-3 py-2">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <a href="/auth/login" className="text-gray-700 hover:text-gray-900 font-semibold text-sm sm:text-base px-3 sm:px-4 py-2">
                 Sign In
               </a>
               <a
                 href="/auth/signup"
-                className="inline-flex items-center px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm transition-all"
+                className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base font-bold rounded-lg text-white bg-[#1877F2] hover:bg-[#166fe5] shadow-md transition-all"
               >
-                <span className="hidden sm:inline">Get Started</span>
-                <span className="sm:hidden">Start</span>
+                Get Started
               </a>
             </div>
           </div>
@@ -56,7 +55,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
               <a
                 href="/auth/signup"
-                className="inline-flex items-center justify-center px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg font-bold rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg sm:shadow-xl hover:shadow-xl sm:hover:shadow-2xl transform hover:-translate-y-0.5 transition-all"
+                className="inline-flex items-center justify-center px-8 py-3 sm:py-4 text-base sm:text-lg font-bold rounded-lg text-white bg-[#1877F2] hover:bg-[#166fe5] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
               >
                 Start Free Trial
                 <svg className="ml-2 w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

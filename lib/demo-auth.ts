@@ -55,9 +55,10 @@ export const DEMO_PROPERTIES = [
     slug: 'modern-3br-condo-makati',
     created_at: new Date().toISOString(),
     images: [
-      { id: 'img-1', url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800', is_cover: true },
-      { id: 'img-2', url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800', is_cover: false },
+      { id: 'img-1', url: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop', is_cover: true },
+      { id: 'img-2', url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop', is_cover: false },
     ],
+    cover_image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop',
   },
   {
     id: 'prop-2',
@@ -73,8 +74,9 @@ export const DEMO_PROPERTIES = [
     slug: 'luxury-house-alabang',
     created_at: new Date().toISOString(),
     images: [
-      { id: 'img-3', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800', is_cover: true },
+      { id: 'img-3', url: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop', is_cover: true },
     ],
+    cover_image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop',
   },
 ]
 
