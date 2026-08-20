@@ -155,64 +155,103 @@ export default function LeadsPage() {
             </Link>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Contact
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Property
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date
-                    </th>
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {leads.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">{lead.name}</div>
-                          <div className="text-sm text-gray-500">{lead.email}</div>
-                          <div className="text-sm text-gray-500">{lead.phone}</div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900">{lead.property_title}</div>
-                        {lead.message && (
-                          <div className="text-sm text-gray-500 truncate max-w-xs">{lead.message}</div>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {getStatusBadge(lead.status)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(lead.created_at)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <Link
-                          href={`/dashboard/leads/${lead.id}`}
-                          className="text-blue-600 hover:text-blue-900 font-semibold"
-                        >
-                          View Details
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          <>
+            {/* Mobile Card View */}
+            <div className="block lg:hidden space-y-4">
+              {leads.map((lead) => (
+                <div key={lead.id} className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-gray-900 mb-1">{lead.name}</h3>
+                      <p className="text-sm text-gray-600">{lead.email}</p>
+                      <p className="text-sm text-gray-600">{lead.phone}</p>
+                    </div>
+                    <div className="ml-3 flex-shrink-0">
+                      {getStatusBadge(lead.status)}
+                    </div>
+                  </div>
+                  
+                  <div className="mb-3 pb-3 border-b border-gray-100">
+                    <p className="text-sm font-medium text-gray-700 mb-1">Property</p>
+                    <p className="text-sm text-gray-900">{lead.property_title}</p>
+                    {lead.message && (
+                      <p className="text-sm text-gray-500 mt-1 line-clamp-2">{lead.message}</p>
+                    )}
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">{formatDate(lead.created_at)}</span>
+                    <Link
+                      href={`/dashboard/leads/${lead.id}`}
+                      className="text-sm font-semibold text-blue-600 hover:text-blue-800"
+                    >
+                      View Details →
+                    </Link>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden lg:block bg-white rounded-xl shadow-sm border overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Contact
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Property
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Date
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Actions
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {leads.map((lead) => (
+                      <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div>
+                            <div className="text-sm font-medium text-gray-900">{lead.name}</div>
+                            <div className="text-sm text-gray-500">{lead.email}</div>
+                            <div className="text-sm text-gray-500">{lead.phone}</div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-900">{lead.property_title}</div>
+                          {lead.message && (
+                            <div className="text-sm text-gray-500 truncate max-w-xs">{lead.message}</div>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          {getStatusBadge(lead.status)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {formatDate(lead.created_at)}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <Link
+                            href={`/dashboard/leads/${lead.id}`}
+                            className="text-blue-600 hover:text-blue-900 font-semibold"
+                          >
+                            View Details
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
         )}
       </main>
     </div>
