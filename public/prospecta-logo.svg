@@ -1,28 +1,34 @@
-<svg width="900" height="200" viewBox="0 0 900 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&amp;display=swap');
-      text {
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        font-weight: 900;
-        fill: #1a1a1a;
-      }
-    </style>
-  </defs>
-  
-  <!-- Prospecta text -->
-  <text x="50" y="155" font-size="140" letter-spacing="-0.02em">Pr</text>
-  
-  <!-- House icon replacing 'o' -->
-  <g transform="translate(310, 50)">
-    <circle cx="50" cy="65" r="48" fill="#1a1a1a"/>
-    <!-- House shape -->
-    <path d="M 35 68 L 50 53 L 65 68 L 65 85 L 35 85 Z" fill="white"/>
-    <!-- Windows -->
-    <rect x="42" y="75" width="6" height="7" rx="1" fill="#1a1a1a"/>
-    <rect x="52" y="75" width="6" height="7" rx="1" fill="#1a1a1a"/>
+<svg width="800" height="180" viewBox="0 0 800 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Prospecta wordmark with integrated house icon -->
+  <g transform="translate(0, 0)">
+    <!-- P -->
+    <path d="M30 40 L30 160 M30 40 L70 40 C90 40 95 50 95 65 C95 80 90 90 70 90 L30 90" stroke="#1a1a1a" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- r -->
+    <path d="M120 85 L120 160 M120 95 C125 85 140 85 145 85" stroke="#1a1a1a" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- House 'o' -->
+    <circle cx="210" cy="115" r="45" fill="#1a1a1a"/>
+    <path d="M185 120 L210 95 L235 120 L235 145 L185 145 Z" fill="white"/>
+    <rect x="200" y="132" width="8" height="13" fill="white"/>
+    <rect x="212" y="132" width="8" height="13" fill="white"/>
+    
+    <!-- s -->
+    <path d="M285 95 C275 85 295 75 310 85 C320 90 315 100 305 105 C295 110 285 115 290 130 C295 145 320 145 325 135" stroke="#1a1a1a" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- p -->
+    <path d="M360 75 L360 170 M360 90 C365 85 375 85 390 85 C410 85 415 95 415 115 C415 135 410 145 390 145 C375 145 365 145 360 140" stroke="#1a1a1a" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- e -->
+    <path d="M445 110 L505 110 C505 85 495 75 475 75 C445 75 440 95 445 115 C450 135 470 145 490 145 C500 145 505 140 505 135" stroke="#1a1a1a" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- c -->
+    <path d="M545 95 C535 85 520 85 510 95 C500 105 500 125 515 140 C525 145 540 145 545 135" stroke="#1a1a1a" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- t -->
+    <path d="M575 70 L575 145 C575 155 585 155 595 150 M560 90 L590 90" stroke="#1a1a1a" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    
+    <!-- a -->
+    <path d="M625 85 L625 115 C625 145 645 145 665 140 L665 160 M665 105 C665 85 645 75 625 85" stroke="#1a1a1a" stroke-width="25" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
   </g>
-  
-  <!-- Continue text after the house icon -->
-  <text x="410" y="155" font-size="140" letter-spacing="-0.02em">specta</text>
 </svg>
