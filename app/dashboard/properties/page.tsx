@@ -18,6 +18,7 @@ interface Property {
   bathrooms?: number
   area?: number
   cover_image?: string
+  images?: any[]
 }
 
 function formatPrice(price: number): string {
@@ -31,14 +32,16 @@ function formatPrice(price: number): string {
 
 function getPropertyTypeLabel(type: string): string {
   const types: Record<string, string> = {
-    house: '🏠 House & Lot',
-    condo: '🏢 Condominium',
-    lot: '🌳 Lot Only',
-    commercial: '🏬 Commercial',
-    HOUSE_LOT: '🏠 House & Lot',
-    CONDOMINIUM: '🏢 Condominium',
-    LOT_ONLY: '🌳 Lot Only',
-    COMMERCIAL: '🏬 Commercial',
+    house: 'House & Lot',
+    condo: 'Condominium',
+    apartment: 'Apartment',
+    lot: 'Lot Only',
+    commercial: 'Commercial',
+    HOUSE_LOT: 'House & Lot',
+    CONDOMINIUM: 'Condominium',
+    APARTMENT: 'Apartment',
+    LOT_ONLY: 'Lot Only',
+    COMMERCIAL: 'Commercial',
   }
   return types[type] || type
 }
@@ -67,18 +70,18 @@ function getStatusBadge(status: string) {
 export default function PropertiesPage() {
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading] = useState(true)
+  const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
+  const [showGallery, setShowGallery] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const supabase = createClient()
 
   useEffect(() => {
     async function loadProperties() {
       if (isDemoMode()) {
-        // Load demo properties
         setProperties(DEMO_PROPERTIES as any)
         setLoading(false)
       } else {
-        // Load real properties from Supabase
-        const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
-        
         if (!user) return
 
         const { data } = await supabase
@@ -95,6 +98,12 @@ export default function PropertiesPage() {
     loadProperties()
   }, [])
 
+  const openGallery = (property: Property) => {
+    setSelectedProperty(property)
+    setCurrentImageIndex(0)
+    setShowGallery(true)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -108,15 +117,19 @@ export default function PropertiesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-14 sm:h-16">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <div className="h-8 w-8 sm:h-9 sm:w-9 bg-[#1877F2] rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
-                <span className="text-white font-bold text-lg sm:text-xl">P</span>
-              </div>
-              <Link href="/dashboard" className="text-lg sm:text-xl font-bold text-[#1877F2] truncate">
-                Prospecta
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Link href="/dashboard" className="flex items-center">
+                <Image 
+                  src="/prospecta-logo.svg" 
+                  alt="Prospecta" 
+                  width={140} 
+                  height={32}
+                  className="h-8"
+                />
               </Link>
             </div>
             <div className="flex items-center">
@@ -132,7 +145,7 @@ export default function PropertiesPage() {
             </div>
           </div>
         </div>
-      </nav>
+      </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
@@ -165,19 +178,46 @@ export default function PropertiesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {properties.map((property) => (
-              <div key={property.id} className="bg-white rounded-lg shadow border border-gray-200 hover:shadow-lg transition-all overflow-hidden">
-                {/* Property Image */}
-                <div className="aspect-[4/3] bg-gray-200 overflow-hidden">
-                  {property.cover_image ? (
-                    <img 
-                      src={property.cover_image} 
-                      alt={property.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                    />
+              <div key={property.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+                {/* Property Images Grid */}
+                <div className="relative">
+                  {property.images && property.images.length > 0 ? (
+                    <div className="grid grid-cols-2 gap-1">
+                      {property.images.slice(0, 4).map((img: any, idx: number) => (
+                        <div 
+                          key={idx} 
+                          className={`relative ${idx === 0 ? 'col-span-2 h-48' : 'h-32'} bg-gray-200`}
+                        >
+                          <img
+                            src={img.url || img}
+                            alt={`${property.title} - Photo ${idx + 1}`}
+                            className="w-full h-full object-cover"
+                          />
+                          {idx === 3 && property.images && property.images.length > 4 && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-semibold">
+                              +{property.images.length - 4} more
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-6xl">
+                    <div className="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-6xl">
                       {property.property_type === 'house' || property.property_type === 'HOUSE_LOT' ? '🏠' : '🏢'}
                     </div>
+                  )}
+                  
+                  {/* View Photos Button */}
+                  {property.images && property.images.length > 1 && (
+                    <button
+                      onClick={() => openGallery(property)}
+                      className="absolute bottom-2 right-2 px-3 py-1.5 bg-white/90 hover:bg-white rounded-lg shadow-lg flex items-center gap-1.5 text-sm font-medium transition-all"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      View Photos ({property.images.length})
+                    </button>
                   )}
                 </div>
                 
@@ -263,34 +303,19 @@ export default function PropertiesPage() {
                             Preview
                           </Link>
                         </div>
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => {
-                              const url = `${window.location.origin}/p/${property.slug}`
-                              const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
-                              window.open(fbUrl, '_blank', 'width=600,height=400')
-                            }}
-                            className="flex-1 px-3 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-md text-sm font-semibold transition-colors flex items-center justify-center gap-1.5"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                            </svg>
-                            Share
-                          </button>
-                          <button
-                            onClick={() => {
-                              const url = `${window.location.origin}/p/${property.slug}`
-                              navigator.clipboard.writeText(url)
-                              alert('✅ Link copied! Paste it on Facebook.')
-                            }}
-                            className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors"
-                            title="Copy link"
-                          >
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                            </svg>
-                          </button>
-                        </div>
+                        <button
+                          onClick={() => {
+                            const url = `${window.location.origin}/p/${property.slug}`
+                            const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
+                            window.open(fbUrl, '_blank', 'width=600,height=400')
+                          }}
+                          className="w-full px-3 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-md text-sm font-semibold transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                          </svg>
+                          Share on Facebook
+                        </button>
                       </>
                     ) : (
                       <>
@@ -315,6 +340,84 @@ export default function PropertiesPage() {
           </div>
         )}
       </main>
+
+      {/* Photo Gallery Modal */}
+      {showGallery && selectedProperty && selectedProperty.images && (
+        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+          <div className="relative max-w-5xl w-full">
+            {/* Close button */}
+            <button
+              onClick={() => setShowGallery(false)}
+              className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full hover:bg-gray-100"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Image counter */}
+            <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-white/90 rounded-full text-sm font-medium">
+              {currentImageIndex + 1} / {selectedProperty.images.length}
+            </div>
+
+            {/* Property title */}
+            <div className="absolute bottom-20 left-4 right-4 z-10 px-4 py-2 bg-white/90 rounded-lg">
+              <h3 className="font-semibold text-gray-900">{selectedProperty.title}</h3>
+              <p className="text-sm text-gray-600">{selectedProperty.location}</p>
+            </div>
+
+            {/* Main image */}
+            <div className="bg-white rounded-lg overflow-hidden">
+              <img
+                src={selectedProperty.images[currentImageIndex]?.url || selectedProperty.images[currentImageIndex]}
+                alt={`${selectedProperty.title} - Photo ${currentImageIndex + 1}`}
+                className="w-full h-[70vh] object-contain"
+              />
+            </div>
+
+            {/* Navigation buttons */}
+            {selectedProperty.images.length > 1 && (
+              <>
+                <button
+                  onClick={() => setCurrentImageIndex(prev => prev > 0 ? prev - 1 : selectedProperty.images!.length - 1)}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white rounded-full hover:bg-gray-100"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={() => setCurrentImageIndex(prev => prev < selectedProperty.images!.length - 1 ? prev + 1 : 0)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white rounded-full hover:bg-gray-100"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
+
+            {/* Thumbnail strip */}
+            <div className="mt-4 flex gap-2 justify-center overflow-x-auto max-w-full px-4">
+              {selectedProperty.images.map((img: any, idx: number) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentImageIndex(idx)}
+                  className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 ${
+                    currentImageIndex === idx ? 'border-white' : 'border-transparent opacity-60'
+                  }`}
+                >
+                  <img 
+                    src={img.url || img} 
+                    alt="" 
+                    className="w-full h-full object-cover" 
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
