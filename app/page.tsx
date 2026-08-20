@@ -43,7 +43,7 @@ export default function Home() {
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-3xl mx-auto">
-              The mobile-first platform built for real estate agents who get buyers through Facebook. 
+              The platform built for real estate agents who get buyers through Facebook. 
               Never lose a lead again.
             </p>
             
@@ -134,9 +134,9 @@ export default function Home() {
               <div className="h-12 w-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center text-2xl mb-4">
                 📱
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Mobile-First Design</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Works On Any Device</h3>
               <p className="text-gray-600 leading-relaxed">
-                Manage everything from your phone. Create listings, respond to leads, and schedule viewings on the go.
+                Manage everything from your phone or desktop. Create listings, respond to leads, and schedule viewings anywhere.
               </p>
             </div>
 
@@ -281,23 +281,23 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
+      <footer className="bg-gray-900 text-gray-400 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white text-lg font-bold">🏠</span>
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center space-x-2 mb-4 md:mb-0">
+              <div className="h-6 w-6 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm font-bold">🏠</span>
               </div>
-              <span className="text-xl font-bold text-white">Prospecta</span>
+              <span className="text-lg font-bold text-white">Prospecta</span>
             </div>
-            <p className="text-sm mb-4">
-              © 2026 Prospecta. Built for Facebook-first real estate agents.
+            <div className="flex space-x-6 text-sm mb-4 md:mb-0">
+              <a href="#" className="hover:text-white transition-colors">Privacy</a>
+              <a href="#" className="hover:text-white transition-colors">Terms</a>
+              <a href="#" className="hover:text-white transition-colors">Contact</a>
+            </div>
+            <p className="text-sm text-gray-500">
+              © 2026 Prospecta. All rights reserved.
             </p>
-            <div className="flex justify-center space-x-6 text-sm">
-              <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-              <a href="#" className="hover:text-white transition-colors">Contact Us</a>
-            </div>
           </div>
         </div>
       </footer>
