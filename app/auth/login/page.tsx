@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { setDemoMode } from '@/lib/demo-auth'
@@ -40,13 +39,9 @@ export default function LoginPage() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <div className="mx-auto mb-6 flex items-center justify-center">
-              <Image 
-                src="/prospecta-logo.svg" 
-                alt="Prospecta" 
-                width={200} 
-                height={45}
-                className="h-10 w-auto"
-              />
+              <span className="text-4xl font-bold text-gray-900">
+                Prospecta
+              </span>
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Welcome Back

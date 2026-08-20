@@ -123,13 +123,9 @@ export default function PropertiesPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Link href="/dashboard" className="flex items-center">
-                <Image 
-                  src="/prospecta-logo.svg" 
-                  alt="Prospecta" 
-                  width={140} 
-                  height={32}
-                  className="h-8"
-                />
+                <span className="text-2xl font-bold text-gray-900">
+                  Prospecta
+                </span>
               </Link>
             </div>
             <div className="flex items-center">
