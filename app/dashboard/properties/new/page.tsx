@@ -5,13 +5,22 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import type { PropertyType, PropertyStatus } from '@/lib/types/database'
 
-const PROPERTY_TYPES: { value: PropertyType; label: string; emoji: string }[] = [
-  { value: 'HOUSE_LOT', label: 'House & Lot', emoji: '🏠' },
-  { value: 'CONDOMINIUM', label: 'Condominium', emoji: '🏢' },
-  { value: 'LOT_ONLY', label: 'Lot Only', emoji: '🌳' },
-  { value: 'COMMERCIAL', label: 'Commercial', emoji: '🏬' },
-  { value: 'OTHER', label: 'Other', emoji: '➕' },
+const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
+  { value: 'HOUSE_LOT', label: 'House & Lot' },
+  { value: 'CONDOMINIUM', label: 'Condominium' },
+  { value: 'LOT_ONLY', label: 'Lot Only' },
+  { value: 'COMMERCIAL', label: 'Commercial' },
+  { value: 'OTHER', label: 'Other' },
 ]
+
+// Dynamic fields based on property type
+const PROPERTY_FIELDS = {
+  HOUSE_LOT: ['bedrooms', 'bathrooms', 'garage', 'lotArea', 'floorArea'],
+  CONDOMINIUM: ['bedrooms', 'bathrooms', 'floorNumber', 'unitNumber', 'parkingSlots'],
+  LOT_ONLY: ['lotArea', 'titleType'],
+  COMMERCIAL: ['floorArea', 'parking', 'floors'],
+  OTHER: [],
+}
 
 function generateSlug(title: string): string {
   return title
@@ -29,6 +38,18 @@ export default function NewPropertyPage() {
     location: '',
     description: '',
     status: 'DRAFT' as PropertyStatus,
+    // Dynamic fields
+    bedrooms: '',
+    bathrooms: '',
+    garage: '',
+    lotArea: '',
+    floorArea: '',
+    floorNumber: '',
+    unitNumber: '',
+    parkingSlots: '',
+    titleType: '',
+    parking: '',
+    floors: '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -74,15 +95,53 @@ export default function NewPropertyPage() {
     }
   }
 
+  const dynamicFields = PROPERTY_FIELDS[property.property_type] || []
+
+  const renderDynamicField = (fieldName: string) => {
+    const labels: Record<string, string> = {
+      bedrooms: 'Bedrooms',
+      bathrooms: 'Bathrooms',
+      garage: 'Garage Spaces',
+      lotArea: 'Lot Area (sqm)',
+      floorArea: 'Floor Area (sqm)',
+      floorNumber: 'Floor Number',
+      unitNumber: 'Unit Number',
+      parkingSlots: 'Parking Slots',
+      titleType: 'Title Type',
+      parking: 'Parking Spaces',
+      floors: 'Number of Floors',
+    }
+
+    return (
+      <div key={fieldName}>
+        <label htmlFor={fieldName} className="block text-sm font-medium text-gray-700">
+          {labels[fieldName]}
+        </label>
+        <input
+          type={fieldName === 'unitNumber' || fieldName === 'titleType' ? 'text' : 'number'}
+          id={fieldName}
+          min="0"
+          step={fieldName.includes('Area') ? '0.01' : '1'}
+          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+          value={(property as any)[fieldName]}
+          onChange={(e) => setProperty({ ...property, [fieldName]: e.target.value })}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <button
             onClick={() => router.back()}
-            className="text-sm text-blue-600 hover:text-blue-800"
+            className="inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
           >
-            ← Back
+            <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Back
           </button>
         </div>
 
@@ -91,7 +150,7 @@ export default function NewPropertyPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Create New Property</h2>
 
             {error && (
-              <div className="mb-4 rounded-md bg-red-50 p-4">
+              <div className="mb-4 rounded-md bg-red-50 border border-red-200 p-4">
                 <p className="text-sm text-red-800">{error}</p>
               </div>
             )}
@@ -124,16 +183,25 @@ export default function NewPropertyPage() {
                       onClick={() => setProperty({ ...property, property_type: type.value })}
                       className={`p-3 rounded-lg border-2 text-center transition-colors ${
                         property.property_type === type.value
-                          ? 'border-blue-500 bg-blue-50'
+                          ? 'border-[#1877F2] bg-blue-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
-                      <div className="text-2xl mb-1">{type.emoji}</div>
-                      <div className="text-xs font-medium text-gray-900">{type.label}</div>
+                      <div className="text-sm font-medium text-gray-900">{type.label}</div>
                     </button>
                   ))}
                 </div>
               </div>
+
+              {/* Dynamic Fields based on property type */}
+              {dynamicFields.length > 0 && (
+                <div className="grid grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="col-span-2 text-sm font-medium text-blue-900 mb-2">
+                    Property Details
+                  </div>
+                  {dynamicFields.map((field) => renderDynamicField(field))}
+                </div>
+              )}
 
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700">
@@ -213,7 +281,7 @@ export default function NewPropertyPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#1877F2] hover:bg-[#166fe5] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Creating...' : 'Create Property'}
                 </button>
