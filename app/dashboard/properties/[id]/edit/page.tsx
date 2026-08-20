@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useParams } from 'next/navigation'
-import type { Property, PropertyType, PropertyStatus, PropertyAttribute } from '@/lib/types/database'
+import type { Property, PropertyType, PropertyStatus, PropertyAttribute, PropertyImage } from '@/lib/types/database'
+import ImageUpload from './ImageUpload'
 
 const PROPERTY_TYPES: { value: PropertyType; label: string; emoji: string }[] = [
   { value: 'HOUSE_LOT', label: 'House & Lot', emoji: '🏠' },
