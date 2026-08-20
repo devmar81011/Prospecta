@@ -54,7 +54,7 @@ export default function Home() {
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
               <a
-                href="/auth/signup"
+                href="/auth/login"
                 className="inline-flex items-center justify-center px-8 py-3 sm:py-4 text-base sm:text-lg font-bold rounded-lg text-white bg-[#1877F2] hover:bg-[#166fe5] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
               >
                 Start Free Trial
