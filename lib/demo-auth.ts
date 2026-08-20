@@ -96,7 +96,6 @@ export const DEMO_PROPERTIES = [
     images: [
       { id: 'img-3-1', url: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800', is_cover: true },
       { id: 'img-3-2', url: 'https://images.unsplash.com/photo-1560448204-603b3fc33ddc?w=800', is_cover: false },
-      { id: 'img-3-3', url: 'https://images.unsplash.com/photo-1560448204-444092dfa2e5?w=800', is_cover: false },
       { id: 'img-3-4', url: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800', is_cover: false },
     ],
     cover_image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800',
