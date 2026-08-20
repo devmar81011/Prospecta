@@ -19,21 +19,21 @@ interface Lead {
 
 function getStatusBadge(status: string) {
   const badges: Record<string, { bg: string; text: string }> = {
-    new: { bg: 'bg-red-100', text: 'text-red-800' },
+    new: { bg: 'bg-orange-100', text: 'text-orange-800' },
     contacted: { bg: 'bg-blue-100', text: 'text-blue-800' },
-    qualified: { bg: 'bg-pink-100', text: 'text-pink-800' },
+    qualified: { bg: 'bg-green-100', text: 'text-green-800' },
     viewing: { bg: 'bg-purple-100', text: 'text-purple-800' },
     negotiating: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-    reserved: { bg: 'bg-orange-100', text: 'text-orange-800' },
+    reserved: { bg: 'bg-teal-100', text: 'text-teal-800' },
     sold: { bg: 'bg-green-100', text: 'text-green-800' },
     lost: { bg: 'bg-gray-100', text: 'text-gray-800' },
-    NEW: { bg: 'bg-red-100', text: 'text-red-800' },
+    NEW: { bg: 'bg-orange-100', text: 'text-orange-800' },
     CONTACTED: { bg: 'bg-blue-100', text: 'text-blue-800' },
-    INTERESTED: { bg: 'bg-pink-100', text: 'text-pink-800' },
+    INTERESTED: { bg: 'bg-green-100', text: 'text-green-800' },
     VIEWING: { bg: 'bg-purple-100', text: 'text-purple-800' },
     NEGOTIATING: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-    RESERVED: { bg: 'bg-orange-100', text: 'text-orange-800' },
-    SOLD: { bg: 'bg-green-100', text: 'text-green-800' },
+    RESERVED: { bg: 'bg-teal-100', text: 'text-teal-800' },
+    SOLD: { bg: 'bg-emerald-100', text: 'text-emerald-800' },
     NOT_INTERESTED: { bg: 'bg-gray-100', text: 'text-gray-800' },
   }
   const badge = badges[status] || badges.new
