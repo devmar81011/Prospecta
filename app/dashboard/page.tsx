@@ -13,6 +13,41 @@ async function getProfile(userId: string) {
   return profile
 }
 
+async function getDashboardStats(userId: string) {
+  const supabase = await createClient()
+  
+  const { data: newLeads } = await supabase
+    .from('leads')
+    .select('id')
+    .eq('agent_id', userId)
+    .eq('status', 'NEW')
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  const { data: todayViewings } = await supabase
+    .from('viewings')
+    .select('*, leads!inner(agent_id)')
+    .eq('leads.agent_id', userId)
+    .eq('status', 'SCHEDULED')
+    .gte('scheduled_at', today.toISOString())
+    .lt('scheduled_at', tomorrow.toISOString())
+
+  const { data: activeProperties } = await supabase
+    .from('properties')
+    .select('id')
+    .eq('agent_id', userId)
+    .eq('status', 'ACTIVE')
+
+  return {
+    newLeadsCount: newLeads?.length || 0,
+    todayViewingsCount: todayViewings?.length || 0,
+    activePropertiesCount: activeProperties?.length || 0,
+  }
+}
+
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -22,6 +57,7 @@ export default async function DashboardPage() {
   }
 
   const profile = await getProfile(user.id)
+  const stats = await getDashboardStats(user.id)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -109,7 +145,7 @@ export default async function DashboardPage() {
                     <dt className="text-sm font-medium text-gray-500 truncate">
                       Today's Viewings
                     </dt>
-                    <dd className="text-3xl font-semibold text-gray-900">0</dd>
+                    <dd className="text-3xl font-semibold text-gray-900">{stats.todayViewingsCount}</dd>
                   </dl>
                 </div>
               </div>
@@ -132,7 +168,7 @@ export default async function DashboardPage() {
                     <dt className="text-sm font-medium text-gray-500 truncate">
                       Active Properties
                     </dt>
-                    <dd className="text-3xl font-semibold text-gray-900">0</dd>
+                    <dd className="text-3xl font-semibold text-gray-900">{stats.activePropertiesCount}</dd>
                   </dl>
                 </div>
               </div>
