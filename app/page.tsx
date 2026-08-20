@@ -13,13 +13,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center">
-              <Image 
-                src="/prospecta-logo.svg" 
-                alt="Prospecta" 
-                width={140} 
-                height={32}
-                className="h-7 w-auto sm:h-8"
-              />
+              <span className="text-2xl sm:text-3xl font-bold text-gray-900">
+                Prospecta
+              </span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <a href="/auth/login" className="text-gray-700 hover:text-gray-900 font-semibold text-sm sm:text-base px-3 sm:px-4 py-2">
