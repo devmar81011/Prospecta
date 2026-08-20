@@ -18,14 +18,14 @@ interface ImageUploadProps {
 
 export default function ImageUpload({ propertyId, existingImages, onImagesUpdated }: ImageUploadProps) {
   const [uploading, setUploading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const supabase = createClient()
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       setUploading(true)
-      setError(null)
+      setErrorMsg(null)
 
       if (!event.target.files || event.target.files.length === 0) {
         throw new Error('You must select at least one image to upload.')
@@ -82,7 +82,7 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
         fileInputRef.current.value = ''
       }
     } catch (err: any) {
-      setError(err.message)
+      setErrorMsg(err.message)
     } finally {
       setUploading(false)
     }
@@ -90,7 +90,7 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
 
   const deleteImage = async (imageId: string, storagePath: string) => {
     try {
-      setError(null)
+      setErrorMsg(null)
 
       // Delete from storage
       const { error: storageError } = await supabase.storage
@@ -109,13 +109,13 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
 
       onImagesUpdated()
     } catch (err: any) {
-      setError(err.message)
+      setErrorMsg(err.message)
     }
   }
 
   const setCoverImage = async (imageId: string) => {
     try {
-      setError(null)
+      setErrorMsg(null)
 
       // First, unset all as cover
       const { error: unsetError } = await supabase
@@ -135,13 +135,13 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
 
       onImagesUpdated()
     } catch (err: any) {
-      setError(err.message)
+      setErrorMsg(err.message)
     }
   }
 
   const reorderImage = async (imageId: string, newOrder: number) => {
     try {
-      setError(null)
+      setErrorMsg(null)
 
       const { error } = await supabase
         .from('property_images')
@@ -152,7 +152,7 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
 
       onImagesUpdated()
     } catch (err: any) {
-      setError(err.message)
+      setErrorMsg(err.message)
     }
   }
 
@@ -160,9 +160,9 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
     <div className="border-t pt-6">
       <h3 className="text-lg font-medium text-gray-900 mb-4">Property Images</h3>
 
-      {error && (
+      {errorMsg && (
         <div className="mb-4 rounded-md bg-red-50 p-4">
-          <p className="text-sm text-red-800">{error}</p>
+          <p className="text-sm text-red-800">{errorMsg}</p>
         </div>
       )}
 
