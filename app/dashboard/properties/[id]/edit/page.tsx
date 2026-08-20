@@ -50,6 +50,7 @@ export default function EditPropertyPage() {
   const propertyId = params.id as string
   const [property, setProperty] = useState<Partial<Property> | null>(null)
   const [attributes, setAttributes] = useState<Partial<PropertyAttribute>[]>([])
+  const [images, setImages] = useState<PropertyImage[]>([])
   const [newAttribute, setNewAttribute] = useState({ label: '', value: '', unit: '' })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
@@ -84,6 +85,15 @@ export default function EditPropertyPage() {
 
       if (attributesError) throw attributesError
       setAttributes(attributesData || [])
+
+      const { data: imagesData, error: imagesError } = await supabase
+        .from('property_images')
+        .select('*')
+        .eq('property_id', propertyId)
+        .order('sort_order', { ascending: true })
+
+      if (imagesError) throw imagesError
+      setImages(imagesData || [])
     } catch (err: any) {
       setError(err.message)
     } finally {
@@ -423,6 +433,12 @@ export default function EditPropertyPage() {
                   </div>
                 </div>
               </div>
+
+              <ImageUpload
+                propertyId={propertyId}
+                existingImages={images}
+                onImagesUpdated={loadProperty}
+              />
 
               <div className="flex justify-between items-center pt-6 border-t">
                 <button
