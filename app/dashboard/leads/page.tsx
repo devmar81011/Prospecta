@@ -308,7 +308,7 @@ export default function LeadsPage() {
                     <select
                       value={(lead as any).temperature || 'WARM'}
                       onChange={(e) => handleTemperatureChange(lead.id, e.target.value)}
-                      className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-1.5 pr-8 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     >
                       <option value="HOT">🔥 HOT - Ready to buy</option>
                       <option value="WARM">🟡 WARM - Interested</option>
@@ -379,7 +379,7 @@ export default function LeadsPage() {
                           <select
                             value={(lead as any).temperature || 'WARM'}
                             onChange={(e) => handleTemperatureChange(lead.id, e.target.value)}
-                            className="px-3 py-1 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold"
+                            className="px-3 py-1 pr-8 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold"
                             style={{
                               backgroundColor: (lead as any).temperature === 'HOT' ? '#fee2e2' : 
                                              (lead as any).temperature === 'COLD' ? '#dbeafe' : '#fef3c7',
