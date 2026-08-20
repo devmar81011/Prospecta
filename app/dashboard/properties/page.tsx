@@ -182,11 +182,21 @@ export default function PropertiesPage() {
                 {/* Property Images Grid */}
                 <div className="relative">
                   {property.images && property.images.length > 0 ? (
-                    <div className="grid grid-cols-2 gap-1">
+                    <div className={`grid gap-1 ${
+                      property.images.length === 1 ? 'grid-cols-1' :
+                      property.images.length === 2 ? 'grid-cols-2' :
+                      property.images.length === 3 ? 'grid-cols-3' :
+                      'grid-cols-2'
+                    }`}>
                       {property.images.slice(0, 4).map((img: any, idx: number) => (
                         <div 
                           key={idx} 
-                          className={`relative ${idx === 0 ? 'col-span-2 h-48' : 'h-32'} bg-gray-200`}
+                          className={`relative bg-gray-200 ${
+                            property.images!.length === 1 ? 'col-span-1 h-64' :
+                            property.images!.length === 2 ? 'col-span-1 h-48' :
+                            property.images!.length === 3 ? (idx === 0 ? 'col-span-3 h-48' : 'col-span-1 h-32') :
+                            (idx === 0 ? 'col-span-2 h-48' : 'col-span-1 h-32')
+                          }`}
                         >
                           <img
                             src={img.url || img}
@@ -367,11 +377,11 @@ export default function PropertiesPage() {
             </div>
 
             {/* Main image */}
-            <div className="bg-white rounded-lg overflow-hidden">
+            <div className="bg-black rounded-lg overflow-hidden">
               <img
                 src={selectedProperty.images[currentImageIndex]?.url || selectedProperty.images[currentImageIndex]}
                 alt={`${selectedProperty.title} - Photo ${currentImageIndex + 1}`}
-                className="w-full h-[70vh] object-contain"
+                className="w-full h-[70vh] object-cover"
               />
             </div>
 
