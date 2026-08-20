@@ -56,8 +56,9 @@ function getPropertyTypeLabel(type: string): string {
   return types[type] || type
 }
 
-export default async function PublicPropertyPage({ params }: { params: { slug: string } }) {
-  const property = await getPropertyBySlug(params.slug)
+export default async function PublicPropertyPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const property = await getPropertyBySlug(slug)
 
   if (!property) {
     notFound()
