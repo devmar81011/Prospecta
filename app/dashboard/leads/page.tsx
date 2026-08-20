@@ -17,28 +17,6 @@ interface Lead {
   created_at: string
 }
 
-function getStatusEmoji(status: string): string {
-  const emojis: Record<string, string> = {
-    new: '🔥',
-    contacted: '💬',
-    qualified: '❤️',
-    viewing: '📅',
-    negotiating: '🤝',
-    reserved: '📝',
-    sold: '🎉',
-    lost: '❌',
-    NEW: '🔥',
-    CONTACTED: '💬',
-    INTERESTED: '❤️',
-    VIEWING: '📅',
-    NEGOTIATING: '🤝',
-    RESERVED: '📝',
-    SOLD: '🎉',
-    NOT_INTERESTED: '❌',
-  }
-  return emojis[status] || '📋'
-}
-
 function getStatusBadge(status: string) {
   const badges: Record<string, { bg: string; text: string }> = {
     new: { bg: 'bg-red-100', text: 'text-red-800' },
@@ -59,11 +37,9 @@ function getStatusBadge(status: string) {
     NOT_INTERESTED: { bg: 'bg-gray-100', text: 'text-gray-800' },
   }
   const badge = badges[status] || badges.new
-  const emoji = getStatusEmoji(status)
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
-      <span className="mr-1">{emoji}</span>
-      {status.toUpperCase().replace('_', ' ')}
+    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text} uppercase`}>
+      {status.replace('_', ' ')}
     </span>
   )
 }
