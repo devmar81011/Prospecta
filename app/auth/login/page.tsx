@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { validateDemoCredentials, setDemoMode } from '@/lib/demo-auth'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -19,6 +20,14 @@ export default function LoginPage() {
     setError(null)
 
     try {
+      // Check for demo credentials first
+      if (validateDemoCredentials(email, password)) {
+        setDemoMode(true)
+        router.push('/dashboard')
+        router.refresh()
+        return
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -63,6 +72,13 @@ export default function LoginPage() {
             <p className="mt-2 text-sm text-gray-600">
               Sign in to manage your properties and leads
             </p>
+          </div>
+
+          {/* Demo Account Notice */}
+          <div className="mb-4 rounded-lg bg-blue-50 border border-blue-200 p-4">
+            <p className="text-sm font-semibold text-blue-900 mb-1">🎮 Demo Account</p>
+            <p className="text-xs text-blue-700">Email: <code className="bg-blue-100 px-1 py-0.5 rounded">demo@prospecta.com</code></p>
+            <p className="text-xs text-blue-700">Password: <code className="bg-blue-100 px-1 py-0.5 rounded">demo123</code></p>
           </div>
 
           {error && (
