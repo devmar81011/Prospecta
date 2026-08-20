@@ -363,19 +363,34 @@ export default function PropertiesPage() {
                             Preview
                           </Link>
                         </div>
-                        <button
-                          onClick={() => {
-                            const url = `${window.location.origin}/p/${property.slug}`
-                            const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
-                            window.open(fbUrl, '_blank', 'width=600,height=400')
-                          }}
-                          className="w-full px-3 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-md text-sm font-semibold transition-colors flex items-center justify-center gap-1.5"
-                        >
-                          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                          </svg>
-                          Share on Facebook
-                        </button>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              const url = `${window.location.origin}/p/${property.slug}`
+                              const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
+                              window.open(fbUrl, '_blank', 'width=600,height=400')
+                            }}
+                            className="flex-1 px-3 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-md text-sm font-semibold transition-colors flex items-center justify-center gap-1.5"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                            Share on Facebook
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm('Mark this property as SOLD?')) {
+                                alert('Property marked as SOLD! (Demo mode)')
+                              }
+                            }}
+                            className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-semibold transition-colors"
+                            title="Mark as Sold"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </button>
+                        </div>
                       </>
                     ) : (
                       <>
@@ -403,7 +418,7 @@ export default function PropertiesPage() {
 
       {/* Photo Gallery Modal */}
       {showGallery && selectedProperty && selectedProperty.images && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
           <div className="relative max-w-5xl w-full">
             {/* Close button */}
             <button
@@ -416,14 +431,8 @@ export default function PropertiesPage() {
             </button>
 
             {/* Image counter */}
-            <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-white/90 rounded-full text-sm font-medium">
+            <div className="absolute top-4 left-4 z-10 px-3 py-1 bg-black/70 text-white rounded-full text-sm font-medium">
               {currentImageIndex + 1} / {selectedProperty.images.length}
-            </div>
-
-            {/* Property title */}
-            <div className="absolute bottom-20 left-4 right-4 z-10 px-4 py-2 bg-white/90 rounded-lg">
-              <h3 className="font-semibold text-gray-900">{selectedProperty.title}</h3>
-              <p className="text-sm text-gray-600">{selectedProperty.location}</p>
             </div>
 
             {/* Main image */}
@@ -433,6 +442,12 @@ export default function PropertiesPage() {
                 alt={`${selectedProperty.title} - Photo ${currentImageIndex + 1}`}
                 className="w-full h-[70vh] object-cover"
               />
+            </div>
+
+            {/* Property title - FIXED POSITION */}
+            <div className="mt-3 px-4 py-3 bg-white rounded-lg">
+              <h3 className="font-semibold text-gray-900 text-lg">{selectedProperty.title}</h3>
+              <p className="text-sm text-gray-600 mt-1">{selectedProperty.location}</p>
             </div>
 
             {/* Navigation buttons */}
