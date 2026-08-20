@@ -24,7 +24,7 @@ export default function Home() {
                 Sign In
               </a>
               <a
-                href="/auth/signup"
+                href="/auth/login"
                 className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base font-bold rounded-lg text-white bg-[#1877F2] hover:bg-[#166fe5] shadow-md transition-all"
               >
                 Get Started
