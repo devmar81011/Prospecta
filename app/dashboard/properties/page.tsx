@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { isDemoMode, DEMO_PROPERTIES } from '@/lib/demo-auth'
 

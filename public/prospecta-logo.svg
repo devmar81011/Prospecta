@@ -1,0 +1,10 @@
+<svg width="180" height="40" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blue P with house -->
+  <path d="M8 8C8 6 9 4 12 4C15 4 18 4 20 6C22 8 24 12 24 18C24 24 22 28 20 30C18 32 15 32 12 32H12V36C12 38 10 40 8 40C6 40 4 38 4 36V8Z" fill="#0066FF"/>
+  <path d="M12 10L16 7L20 10V15H12V10Z" fill="white"/>
+  <rect x="14" y="16" width="2" height="2" fill="white"/>
+  <rect x="18" y="16" width="2" height="2" fill="white"/>
+  
+  <!-- Prospecta text -->
+  <text x="30" y="28" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#1a1a1a">Prospecta</text>
+</svg>
