@@ -227,21 +227,23 @@ export default function PropertiesPage() {
                   </div>
 
                   <div className="space-y-2 border-t border-gray-100 pt-3">
-                    <Link
-                      href={`/dashboard/properties/${property.id}/edit`}
-                      className="block w-full text-center px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700 transition-colors"
-                    >
-                      ✏️ Edit
-                    </Link>
                     {property.status === 'available' || property.status === 'ACTIVE' ? (
                       <>
-                        <Link
-                          href={`/p/${property.slug}`}
-                          target="_blank"
-                          className="block w-full text-center px-3 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-md text-sm font-semibold transition-colors"
-                        >
-                          👁️ Preview
-                        </Link>
+                        <div className="flex gap-2">
+                          <Link
+                            href={`/dashboard/properties/${property.id}/edit`}
+                            className="flex-1 text-center px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700 transition-colors"
+                          >
+                            ✏️ Edit
+                          </Link>
+                          <Link
+                            href={`/p/${property.slug}`}
+                            target="_blank"
+                            className="flex-1 text-center px-3 py-2 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-md text-sm font-semibold transition-colors"
+                          >
+                            👁️ Preview
+                          </Link>
+                        </div>
                         <div className="flex gap-2">
                           <button
                             onClick={() => {
@@ -262,17 +264,27 @@ export default function PropertiesPage() {
                               navigator.clipboard.writeText(url)
                               alert('✅ Link copied! Paste it on Facebook.')
                             }}
-                            className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md text-lg transition-colors"
+                            className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition-colors"
                             title="Copy link"
                           >
-                            📋
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                            </svg>
                           </button>
                         </div>
                       </>
                     ) : (
-                      <div className="text-center text-xs text-gray-500 py-2 bg-gray-50 rounded-md">
-                        Set to "Active" to share
-                      </div>
+                      <>
+                        <Link
+                          href={`/dashboard/properties/${property.id}/edit`}
+                          className="block w-full text-center px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md text-sm font-medium text-gray-700 transition-colors"
+                        >
+                          ✏️ Edit
+                        </Link>
+                        <div className="text-center text-xs text-gray-500 py-2 bg-gray-50 rounded-md">
+                          Set to "Active" to share
+                        </div>
+                      </>
                     )}
                   </div>
                 </div>
