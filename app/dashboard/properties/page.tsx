@@ -1,28 +1,27 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import type { Property } from '@/lib/types/database'
+import { createClient } from '@/lib/supabase/client'
+import { isDemoMode, DEMO_PROPERTIES } from '@/lib/demo-auth'
 
-async function getProperties(userId: string): Promise<Property[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('properties')
-    .select('*')
-    .eq('agent_id', userId)
-    .order('created_at', { ascending: false })
-
-  if (error) {
-    console.error('Error fetching properties:', error)
-    return []
-  }
-
-  return data || []
+interface Property {
+  id: string
+  title: string
+  property_type: string
+  price: number
+  location: string
+  status: string
+  slug: string
+  bedrooms?: number
+  bathrooms?: number
+  area?: number
 }
 
-function formatPrice(price: number, currency: string = 'PHP'): string {
+function formatPrice(price: number): string {
   return new Intl.NumberFormat('en-PH', {
     style: 'currency',
-    currency: currency,
+    currency: 'PHP',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price)
@@ -30,55 +29,98 @@ function formatPrice(price: number, currency: string = 'PHP'): string {
 
 function getPropertyTypeLabel(type: string): string {
   const types: Record<string, string> = {
+    house: '🏠 House & Lot',
+    condo: '🏢 Condominium',
+    lot: '🌳 Lot Only',
+    commercial: '🏬 Commercial',
     HOUSE_LOT: '🏠 House & Lot',
     CONDOMINIUM: '🏢 Condominium',
     LOT_ONLY: '🌳 Lot Only',
     COMMERCIAL: '🏬 Commercial',
-    OTHER: '➕ Other',
   }
   return types[type] || type
 }
 
 function getStatusBadge(status: string) {
   const badges: Record<string, { bg: string; text: string }> = {
+    draft: { bg: 'bg-gray-100', text: 'text-gray-800' },
+    available: { bg: 'bg-green-100', text: 'text-green-800' },
+    reserved: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
+    sold: { bg: 'bg-blue-100', text: 'text-blue-800' },
+    inactive: { bg: 'bg-red-100', text: 'text-red-800' },
     DRAFT: { bg: 'bg-gray-100', text: 'text-gray-800' },
     ACTIVE: { bg: 'bg-green-100', text: 'text-green-800' },
     RESERVED: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
     SOLD: { bg: 'bg-blue-100', text: 'text-blue-800' },
     INACTIVE: { bg: 'bg-red-100', text: 'text-red-800' },
   }
-  const badge = badges[status] || badges.DRAFT
+  const badge = badges[status] || badges.draft
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
-      {status}
+      {status.toUpperCase()}
     </span>
   )
 }
 
-export default async function PropertiesPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+export default function PropertiesPage() {
+  const [properties, setProperties] = useState<Property[]>([])
+  const [loading, setLoading] = useState(true)
 
-  if (!user) {
-    redirect('/auth/login')
+  useEffect(() => {
+    async function loadProperties() {
+      if (isDemoMode()) {
+        // Load demo properties
+        setProperties(DEMO_PROPERTIES as any)
+        setLoading(false)
+      } else {
+        // Load real properties from Supabase
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        if (!user) return
+
+        const { data } = await supabase
+          .from('properties')
+          .select('*')
+          .eq('agent_id', user.id)
+          .order('created_at', { ascending: false })
+
+        setProperties(data || [])
+        setLoading(false)
+      }
+    }
+
+    loadProperties()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading properties...</p>
+        </div>
+      </div>
+    )
   }
-
-  const properties = await getProperties(user.id)
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/dashboard" className="text-xl font-bold text-gray-900">
-                Real Estate Lead App
+            <div className="flex items-center space-x-4">
+              <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <span className="text-white">🏠</span>
+              </div>
+              <Link href="/dashboard" className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Prospecta
               </Link>
             </div>
             <div className="flex items-center">
               <Link
                 href="/dashboard"
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
               >
                 ← Back to Dashboard
               </Link>
@@ -88,26 +130,29 @@ export default async function PropertiesPage() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">My Properties</h1>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Properties</h1>
+            <p className="text-sm text-gray-600 mt-1">Manage your property listings</p>
+          </div>
           <Link
             href="/dashboard/properties/new"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm"
           >
             + New Property
           </Link>
         </div>
 
         {properties.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+          <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
             <div className="text-6xl mb-4">🏠</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No properties yet</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No properties yet</h3>
             <p className="text-gray-600 mb-6">
               Create your first property listing to start getting leads
             </p>
             <Link
               href="/dashboard/properties/new"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm"
             >
               Create Property
             </Link>
@@ -115,48 +160,58 @@ export default async function PropertiesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties.map((property) => (
-              <div key={property.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+              <div key={property.id} className="bg-white rounded-xl shadow-sm border hover:shadow-md transition-all overflow-hidden">
+                <div className="aspect-video bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-6xl">
+                  {property.property_type === 'house' || property.property_type === 'HOUSE_LOT' ? '🏠' : '🏢'}
+                </div>
                 <div className="p-5">
                   <div className="flex justify-between items-start mb-3">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1 truncate">
                         {property.title}
                       </h3>
                       <p className="text-sm text-gray-500">
                         {getPropertyTypeLabel(property.property_type)}
                       </p>
                     </div>
-                    <div>{getStatusBadge(property.status)}</div>
+                    <div className="ml-2 flex-shrink-0">{getStatusBadge(property.status)}</div>
                   </div>
 
                   <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm">
-                      <span className="font-semibold text-blue-600 text-lg">
-                        {formatPrice(property.price, property.currency)}
+                    <div className="flex items-center">
+                      <span className="font-bold text-blue-600 text-xl">
+                        {formatPrice(property.price)}
                       </span>
                     </div>
                     <div className="flex items-center text-sm text-gray-600">
                       <span className="mr-1">📍</span>
-                      {property.location}
+                      <span className="truncate">{property.location}</span>
                     </div>
+                    {(property.bedrooms || property.bathrooms || property.area) && (
+                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                        {property.bedrooms && <span>🛏️ {property.bedrooms} bed</span>}
+                        {property.bathrooms && <span>🚿 {property.bathrooms} bath</span>}
+                        {property.area && <span>📏 {property.area}m²</span>}
+                      </div>
+                    )}
                   </div>
 
-                  <div className="flex space-x-2">
+                  <div className="flex gap-2">
                     <Link
                       href={`/dashboard/properties/${property.id}/edit`}
-                      className="flex-1 text-center px-3 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                      className="flex-1 text-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     >
                       Edit
                     </Link>
-                    {property.status === 'ACTIVE' && (
+                    {property.status === 'available' || property.status === 'ACTIVE' ? (
                       <Link
                         href={`/p/${property.slug}`}
                         target="_blank"
-                        className="flex-1 text-center px-3 py-2 border border-blue-600 rounded-md text-sm font-medium text-blue-600 hover:bg-blue-50"
+                        className="flex-1 text-center px-3 py-2 border border-blue-600 rounded-lg text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
                       >
-                        View Public
+                        View
                       </Link>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </div>

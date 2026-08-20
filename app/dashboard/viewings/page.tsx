@@ -1,37 +1,31 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import type { Viewing } from '@/lib/types/database'
+'use client'
 
-interface ViewingWithDetails extends Viewing {
-  lead: {
-    name: string
-    phone_number: string
-  }
-  property: {
-    title: string
-    location: string
-  }
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
+import { isDemoMode, DEMO_VIEWINGS } from '@/lib/demo-auth'
+
+interface Viewing {
+  id: string
+  property_id: string
+  property_title: string
+  client_name: string
+  scheduled_date: string
+  status: string
+  notes?: string
+  created_at: string
 }
 
-async function getViewings(userId: string): Promise<ViewingWithDetails[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('viewings')
-    .select(`
-      *,
-      lead:leads(name, phone_number),
-      property:properties(title, location)
-    `)
-    .eq('leads.agent_id', userId)
-    .order('scheduled_at', { ascending: true })
-
-  if (error) {
-    console.error('Error fetching viewings:', error)
-    return []
-  }
-
-  return data as ViewingWithDetails[]
+function formatDateTime(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toLocaleDateString('en-US', { 
+    weekday: 'short',
+    month: 'short', 
+    day: 'numeric',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  })
 }
 
 function isToday(date: Date): boolean {
@@ -43,46 +37,135 @@ function isFuture(date: Date): boolean {
   return date > new Date()
 }
 
-export default async function ViewingsPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/auth/login')
+function getStatusBadge(status: string) {
+  const badges: Record<string, { bg: string; text: string }> = {
+    scheduled: { bg: 'bg-blue-100', text: 'text-blue-800' },
+    completed: { bg: 'bg-green-100', text: 'text-green-800' },
+    cancelled: { bg: 'bg-red-100', text: 'text-red-800' },
+    no_show: { bg: 'bg-gray-100', text: 'text-gray-800' },
+    SCHEDULED: { bg: 'bg-blue-100', text: 'text-blue-800' },
+    COMPLETED: { bg: 'bg-green-100', text: 'text-green-800' },
+    CANCELLED: { bg: 'bg-red-100', text: 'text-red-800' },
+    NO_SHOW: { bg: 'bg-gray-100', text: 'text-gray-800' },
   }
+  const badge = badges[status] || badges.scheduled
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
+      {status.toUpperCase().replace('_', ' ')}
+    </span>
+  )
+}
 
-  const allViewings = await getViewings(user.id)
+export default function ViewingsPage() {
+  const [viewings, setViewings] = useState<Viewing[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadViewings() {
+      if (isDemoMode()) {
+        // Load demo viewings
+        setViewings(DEMO_VIEWINGS as any)
+        setLoading(false)
+      } else {
+        // Load real viewings from Supabase
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        if (!user) return
+
+        const { data } = await supabase
+          .from('viewings')
+          .select(`
+            *,
+            lead:leads(name, phone_number),
+            property:properties(title, location)
+          `)
+          .eq('leads.agent_id', user.id)
+          .order('scheduled_at', { ascending: true })
+
+        const formattedViewings = (data || []).map((viewing: any) => ({
+          ...viewing,
+          property_title: viewing.property?.title || 'Unknown Property',
+          client_name: viewing.lead?.name || 'Unknown Client'
+        }))
+
+        setViewings(formattedViewings)
+        setLoading(false)
+      }
+    }
+
+    loadViewings()
+  }, [])
+
   const today = new Date()
   
-  const todayViewings = allViewings.filter(v => {
-    const viewingDate = new Date(v.scheduled_at)
-    return isToday(viewingDate) && v.status === 'SCHEDULED'
+  const todayViewings = viewings.filter(v => {
+    const viewingDate = new Date(v.scheduled_date)
+    return isToday(viewingDate) && (v.status === 'scheduled' || v.status === 'SCHEDULED')
   })
 
-  const upcomingViewings = allViewings.filter(v => {
-    const viewingDate = new Date(v.scheduled_at)
-    return isFuture(viewingDate) && !isToday(viewingDate) && v.status === 'SCHEDULED'
+  const upcomingViewings = viewings.filter(v => {
+    const viewingDate = new Date(v.scheduled_date)
+    return isFuture(viewingDate) && !isToday(viewingDate) && (v.status === 'scheduled' || v.status === 'SCHEDULED')
   })
 
-  const pastViewings = allViewings.filter(v => {
-    const viewingDate = new Date(v.scheduled_at)
-    return viewingDate < today || v.status !== 'SCHEDULED'
+  const pastViewings = viewings.filter(v => {
+    const viewingDate = new Date(v.scheduled_date)
+    return viewingDate < today || (v.status !== 'scheduled' && v.status !== 'SCHEDULED')
   })
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading viewings...</p>
+        </div>
+      </div>
+    )
+  }
+
+  const ViewingCard = ({ viewing }: { viewing: Viewing }) => (
+    <div className="bg-white rounded-lg border shadow-sm p-5 hover:shadow-md transition-shadow">
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900 mb-1">{viewing.property_title}</h3>
+          <p className="text-sm text-gray-600">👤 {viewing.client_name}</p>
+        </div>
+        {getStatusBadge(viewing.status)}
+      </div>
+      <div className="space-y-2 text-sm text-gray-600">
+        <div className="flex items-center">
+          <span className="mr-2">📅</span>
+          {formatDateTime(viewing.scheduled_date)}
+        </div>
+        {viewing.notes && (
+          <div className="flex items-start">
+            <span className="mr-2">📝</span>
+            <span>{viewing.notes}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <Link href="/dashboard" className="text-xl font-bold text-gray-900">
-                Real Estate Lead App
+            <div className="flex items-center space-x-4">
+              <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
+                <span className="text-white">🏠</span>
+              </div>
+              <Link href="/dashboard" className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Prospecta
               </Link>
             </div>
             <div className="flex items-center">
               <Link
                 href="/dashboard"
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
               >
                 ← Back to Dashboard
               </Link>
@@ -93,118 +176,63 @@ export default async function ViewingsPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Site Viewings</h1>
-          <p className="text-gray-600">Manage your scheduled property viewings</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Scheduled Viewings</h1>
+          <p className="text-sm text-gray-600 mt-1">Manage your property viewing appointments</p>
         </div>
 
-        {allViewings.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-12 text-center">
+        {viewings.length === 0 ? (
+          <div className="bg-white rounded-xl shadow-sm border p-12 text-center">
             <div className="text-6xl mb-4">📅</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No viewings scheduled</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No viewings scheduled</h3>
             <p className="text-gray-600 mb-6">
-              Schedule viewings from your lead details page
+              Schedule viewings with your leads to show your properties
             </p>
             <Link
               href="/dashboard/leads"
-              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+              className="inline-flex items-center px-6 py-3 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm"
             >
               View Leads
             </Link>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-8">
+            {/* Today's Viewings */}
             {todayViewings.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">Today's Viewings</h2>
-                <div className="bg-white rounded-lg shadow divide-y">
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                  <span className="mr-2">🔥</span> Today's Viewings
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {todayViewings.map((viewing) => (
-                    <div key={viewing.id} className="p-4 hover:bg-gray-50">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <div className="flex items-center mb-2">
-                            <span className="text-2xl font-bold text-blue-600 mr-3">
-                              {new Date(viewing.scheduled_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-                            </span>
-                            <div>
-                              <p className="font-semibold text-gray-900">{viewing.lead.name}</p>
-                              <p className="text-sm text-gray-600">{viewing.property.title}</p>
-                            </div>
-                          </div>
-                          {viewing.location && (
-                            <p className="text-sm text-gray-600 ml-20">📍 {viewing.location}</p>
-                          )}
-                          {viewing.notes && (
-                            <p className="text-sm text-gray-600 ml-20 mt-1">{viewing.notes}</p>
-                          )}
-                        </div>
-                        <div className="flex flex-col items-end space-y-2">
-                          <a
-                            href={`tel:${viewing.lead.phone_number}`}
-                            className="text-sm text-blue-600 hover:text-blue-800"
-                          >
-                            📞 {viewing.lead.phone_number}
-                          </a>
-                        </div>
-                      </div>
-                    </div>
+                    <ViewingCard key={viewing.id} viewing={viewing} />
                   ))}
                 </div>
               </div>
             )}
 
+            {/* Upcoming Viewings */}
             {upcomingViewings.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">Upcoming Viewings</h2>
-                <div className="bg-white rounded-lg shadow divide-y">
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                  <span className="mr-2">📅</span> Upcoming Viewings
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {upcomingViewings.map((viewing) => (
-                    <div key={viewing.id} className="p-4 hover:bg-gray-50">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-600 mb-1">
-                            {new Date(viewing.scheduled_at).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} at {new Date(viewing.scheduled_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}
-                          </p>
-                          <p className="font-semibold text-gray-900">{viewing.lead.name}</p>
-                          <p className="text-sm text-gray-600">{viewing.property.title}</p>
-                          {viewing.location && (
-                            <p className="text-sm text-gray-600 mt-1">📍 {viewing.location}</p>
-                          )}
-                        </div>
-                        <a
-                          href={`tel:${viewing.lead.phone_number}`}
-                          className="text-sm text-blue-600 hover:text-blue-800"
-                        >
-                          📞 Call
-                        </a>
-                      </div>
-                    </div>
+                    <ViewingCard key={viewing.id} viewing={viewing} />
                   ))}
                 </div>
               </div>
             )}
 
+            {/* Past Viewings */}
             {pastViewings.length > 0 && (
               <div>
-                <h2 className="text-lg font-semibold text-gray-900 mb-3">Past Viewings</h2>
-                <div className="bg-white rounded-lg shadow divide-y">
-                  {pastViewings.slice(0, 10).map((viewing) => (
-                    <div key={viewing.id} className="p-4 hover:bg-gray-50 opacity-75">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <p className="text-sm text-gray-500 mb-1">
-                            {new Date(viewing.scheduled_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                          </p>
-                          <p className="font-medium text-gray-900">{viewing.lead.name}</p>
-                          <p className="text-sm text-gray-600">{viewing.property.title}</p>
-                        </div>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          viewing.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
-                          viewing.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {viewing.status}
-                        </span>
-                      </div>
-                    </div>
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                  <span className="mr-2">📋</span> Past Viewings
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {pastViewings.map((viewing) => (
+                    <ViewingCard key={viewing.id} viewing={viewing} />
                   ))}
                 </div>
               </div>
