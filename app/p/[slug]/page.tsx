@@ -13,7 +13,7 @@ async function getPropertyBySlug(slug: string) {
       agent:profiles(*)
     `)
     .eq('slug', slug)
-    .eq('status', 'ACTIVE')
+    .in('status', ['ACTIVE', 'available'])
     .single()
 
   if (error || !property) return null
