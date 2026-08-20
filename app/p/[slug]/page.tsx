@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import type { Property, PropertyAttribute, PropertyImage, Profile } from '@/lib/types/database'
+import type { Metadata } from 'next'
 import LeadCaptureForm from './LeadCaptureForm'
 import DemoPropertyView from './DemoPropertyView'
 
@@ -50,11 +51,53 @@ function getPropertyTypeLabel(type: string): string {
   const types: Record<string, string> = {
     HOUSE_LOT: 'House & Lot',
     CONDOMINIUM: 'Condominium',
+    APARTMENT: 'Apartment',
     LOT_ONLY: 'Lot Only',
     COMMERCIAL: 'Commercial',
     OTHER: 'Other',
   }
   return types[type] || type
+}
+
+// Generate metadata for Open Graph / Facebook sharing
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params
+  const property = await getPropertyBySlug(slug)
+
+  if (!property) {
+    return {
+      title: 'Property Not Found',
+    }
+  }
+
+  const coverImage = property.images?.find((img: PropertyImage) => img.is_cover)?.image_url || property.images?.[0]?.image_url || ''
+  const priceText = formatPrice(property.price, property.currency)
+  const typeLabel = getPropertyTypeLabel(property.property_type)
+
+  return {
+    title: `${property.title} - ${priceText}`,
+    description: `${typeLabel} in ${property.location}. ${property.description || 'Contact agent for more details.'}`.slice(0, 160),
+    openGraph: {
+      title: property.title,
+      description: `${priceText} • ${typeLabel} • ${property.location}`,
+      images: [
+        {
+          url: coverImage,
+          width: 1200,
+          height: 630,
+          alt: property.title,
+        },
+      ],
+      type: 'website',
+      siteName: 'Prospecta',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: property.title,
+      description: `${priceText} • ${typeLabel}`,
+      images: [coverImage],
+    },
+  }
 }
 
 export default async function PublicPropertyPage({ params }: { params: Promise<{ slug: string }> }) {
