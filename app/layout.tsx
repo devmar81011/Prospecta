@@ -3,14 +3,22 @@ import "./globals.css";
 import PWAInstaller from "@/components/PWAInstaller";
 
 export const metadata: Metadata = {
-  title: "Real Estate Lead App",
-  description: "Simple, mobile-first PWA for real estate agents who primarily get buyers through Facebook.",
+  title: "Prospecta - Real Estate Lead App",
+  description: "Facebook-first PWA for real estate agents to manage properties and leads.",
   manifest: "/manifest.json",
-  themeColor: "#2563eb",
+  themeColor: "#0066FF",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "RE Lead App",
+    title: "Prospecta",
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
   },
   viewport: {
     width: "device-width",
@@ -29,9 +37,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/icon-192.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/icon-192.svg" />
-        <meta name="theme-color" content="#2563eb" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/favicon.svg" />
+        <meta name="theme-color" content="#0066FF" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>

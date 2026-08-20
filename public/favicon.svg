@@ -1,0 +1,9 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Blue P with house icon -->
+  <rect width="512" height="512" fill="white"/>
+  <path d="M120 140C120 120 140 100 180 100C220 100 280 100 300 120C320 140 340 180 340 240C340 300 320 340 300 360C280 380 220 380 180 380C180 380 180 450 180 480C180 500 160 512 140 512C120 512 100 500 100 480C100 460 100 160 100 140C100 120 100 120 120 140Z" fill="#0066FF"/>
+  <!-- House detail -->
+  <path d="M180 160L220 130L260 160V200H180V160Z" fill="white"/>
+  <rect x="200" y="210" width="15" height="15" fill="white"/>
+  <rect x="230" y="210" width="15" height="15" fill="white"/>
+</svg>

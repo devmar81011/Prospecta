@@ -1,13 +1,19 @@
 {
-  "name": "Real Estate Lead App",
-  "short_name": "RE Lead App",
-  "description": "Simple, mobile-first PWA for real estate agents who primarily get buyers through Facebook",
+  "name": "Prospecta - Real Estate Lead App",
+  "short_name": "Prospecta",
+  "description": "Facebook-first real estate lead management PWA for agents",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#0066FF",
   "orientation": "portrait-primary",
   "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
