@@ -38,7 +38,9 @@ function getTemperatureBadge(temp: string) {
 export default function LeadDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [lead, setLead] = useState<Lead | null>(null)
   const [loading, setLoading] = useState(true)
-  const [newStatus, setNewStatus] = useState('')
+  const [temperature, setTemperature] = useState('WARM')
+  const [notes, setNotes] = useState('')
+  const [editingNotes, setEditingNotes] = useState(false)
   const router = useRouter()
   const [leadId, setLeadId] = useState<string>('')
 
@@ -54,7 +56,8 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         const demoLead = DEMO_LEADS.find(l => l.id === leadId)
         if (demoLead) {
           setLead(demoLead as any)
-          setNewStatus(demoLead.status)
+          setTemperature((demoLead as any).temperature || 'WARM')
+          setNotes((demoLead as any).notes || '')
         }
         setLoading(false)
       } else {
@@ -73,7 +76,8 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             ...data,
             property_title: data.property?.title || 'Unknown Property'
           })
-          setNewStatus(data.status)
+          setTemperature(data.temperature || 'WARM')
+          setNotes(data.notes || '')
         }
         setLoading(false)
       }
@@ -82,21 +86,41 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
     loadLead()
   }, [leadId])
 
-  const handleStatusUpdate = async () => {
-    if (!lead || !newStatus) return
+  const handleTemperatureUpdate = async () => {
+    if (!lead || !temperature) return
 
     if (isDemoMode()) {
-      alert('Demo Mode: Status would be updated to: ' + newStatus)
-      setLead({ ...lead, status: newStatus })
+      alert('Demo Mode: Lead temperature updated to: ' + temperature)
+      setLead({ ...lead, temperature })
     } else {
       const supabase = createClient()
       await supabase
         .from('leads')
-        .update({ status: newStatus })
+        .update({ temperature })
         .eq('id', lead.id)
       
-      setLead({ ...lead, status: newStatus })
-      alert('Status updated successfully!')
+      setLead({ ...lead, temperature })
+      alert('Temperature updated successfully!')
+    }
+  }
+
+  const handleNotesUpdate = async () => {
+    if (!lead) return
+
+    if (isDemoMode()) {
+      alert('Demo Mode: Notes saved!')
+      setLead({ ...lead, notes })
+      setEditingNotes(false)
+    } else {
+      const supabase = createClient()
+      await supabase
+        .from('leads')
+        .update({ notes })
+        .eq('id', lead.id)
+      
+      setLead({ ...lead, notes })
+      setEditingNotes(false)
+      alert('Notes saved successfully!')
     }
   }
 
@@ -158,7 +182,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
             <div>
               <h1 className="text-2xl font-bold text-gray-900 mb-2">{lead.name}</h1>
               <div className="flex items-center gap-2">
-                {getStatusBadge(lead.status)}
+                {getTemperatureBadge(lead.temperature || temperature)}
                 <span className="text-sm text-gray-500">
                   • Received {new Date(lead.created_at).toLocaleDateString()}
                 </span>
@@ -208,31 +232,79 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
           </div>
         )}
 
-        {/* Status Update */}
+        {/* Temperature Update */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Update Status</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Lead Temperature</h2>
+          <p className="text-sm text-gray-600 mb-4">Qualify how interested this lead is:</p>
           <div className="flex flex-col sm:flex-row gap-3">
             <select
-              value={newStatus}
-              onChange={(e) => setNewStatus(e.target.value)}
+              value={temperature}
+              onChange={(e) => setTemperature(e.target.value)}
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
-              <option value="NEW">New</option>
-              <option value="CONTACTED">Contacted</option>
-              <option value="INTERESTED">Interested</option>
-              <option value="VIEWING">Viewing Scheduled</option>
-              <option value="NEGOTIATING">Negotiating</option>
-              <option value="RESERVED">Reserved</option>
-              <option value="SOLD">Sold</option>
-              <option value="NOT_INTERESTED">Not Interested</option>
+              <option value="HOT">🔥 HOT - Ready to view or buy</option>
+              <option value="WARM">🟡 WARM - Interested but undecided</option>
+              <option value="COLD">❄️ COLD - Just asking/browsing</option>
             </select>
             <button
-              onClick={handleStatusUpdate}
+              onClick={handleTemperatureUpdate}
               className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
             >
-              Update Status
+              Update
             </button>
           </div>
+        </div>
+
+        {/* Notes */}
+        <div className="bg-white rounded-lg shadow-sm border p-6 mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-900">Personal Notes</h2>
+            {!editingNotes && (
+              <button
+                onClick={() => setEditingNotes(true)}
+                className="text-sm font-medium text-blue-600 hover:text-blue-800"
+              >
+                {lead.notes ? 'Edit Notes' : 'Add Notes'}
+              </button>
+            )}
+          </div>
+          
+          {editingNotes ? (
+            <div>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Add your private notes about this lead..."
+                rows={4}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={handleNotesUpdate}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium"
+                >
+                  Save Notes
+                </button>
+                <button
+                  onClick={() => {
+                    setEditingNotes(false)
+                    setNotes(lead.notes || '')
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div>
+              {lead.notes ? (
+                <p className="text-gray-700 whitespace-pre-wrap">{lead.notes}</p>
+              ) : (
+                <p className="text-gray-400 italic">No notes yet. Click "Add Notes" to add your private notes.</p>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Quick Actions */}

@@ -114,6 +114,8 @@ export const DEMO_LEADS = [
     phone: '+639171234567',
     message: 'Interested in viewing this property. Available this weekend?',
     status: 'new',
+    temperature: 'HOT',
+    notes: 'Very interested, ready to schedule viewing',
     created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
   },
   {
@@ -125,6 +127,8 @@ export const DEMO_LEADS = [
     phone: '+639181234567',
     message: 'Looking for a family home. Is this still available?',
     status: 'contacted',
+    temperature: 'WARM',
+    notes: 'Still comparing options',
     created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
   },
   {
@@ -136,6 +140,8 @@ export const DEMO_LEADS = [
     phone: '+639191234567',
     message: 'Can we schedule a viewing?',
     status: 'qualified',
+    temperature: 'COLD',
+    notes: 'Just browsing for now',
     created_at: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 days ago
   },
 ]
