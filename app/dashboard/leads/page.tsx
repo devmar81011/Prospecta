@@ -113,6 +113,8 @@ export default function LeadsPage() {
     // In production, you'd need the user's Facebook ID or phone number registered with Messenger
     return `https://m.me/${phone.replace(/\D/g, '')}`
   }
+
+  useEffect(() => {
     async function loadLeads() {
       if (isDemoMode()) {
         // Load demo leads
@@ -284,12 +286,11 @@ export default function LeadsPage() {
                 <div key={lead.id} className="bg-white rounded-lg shadow-sm border p-4 hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-base font-semibold text-gray-900 mb-1">{lead.name}</h3>
+                      <Link href={`/dashboard/leads/${lead.id}`}>
+                        <h3 className="text-base font-semibold text-gray-900 mb-1 hover:text-blue-600">{lead.name}</h3>
+                      </Link>
                       <p className="text-sm text-gray-600">{lead.email}</p>
                       <p className="text-sm text-gray-600">{lead.phone}</p>
-                    </div>
-                    <div className="ml-3 flex-shrink-0">
-                      {getTemperatureBadge((lead as any).temperature || 'WARM')}
                     </div>
                   </div>
                   
@@ -300,15 +301,34 @@ export default function LeadsPage() {
                       <p className="text-sm text-gray-500 mt-1 line-clamp-2">{lead.message}</p>
                     )}
                   </div>
+
+                  {/* Temperature Selector */}
+                  <div className="mb-3">
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Temperature</label>
+                    <select
+                      value={(lead as any).temperature || 'WARM'}
+                      onChange={(e) => handleTemperatureChange(lead.id, e.target.value)}
+                      className="w-full px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="HOT">🔥 HOT - Ready to buy</option>
+                      <option value="WARM">🟡 WARM - Interested</option>
+                      <option value="COLD">❄️ COLD - Browsing</option>
+                    </select>
+                  </div>
                   
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-gray-500">{formatDate(lead.created_at)}</span>
-                    <Link
-                      href={`/dashboard/leads/${lead.id}`}
-                      className="text-sm font-semibold text-blue-600 hover:text-blue-800"
+                    <a
+                      href={getMessengerLink(lead.phone, lead.name)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                     >
-                      View Details →
-                    </Link>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.896 1.428 5.48 3.657 7.238v3.519l3.358-1.844c.896.247 1.847.384 2.828.384 5.523 0 10-4.145 10-9.243C22 6.145 17.523 2 12 2zm.96 12.428l-2.54-2.71-4.96 2.71 5.46-5.8 2.6 2.71 4.9-2.71-5.46 5.8z"/>
+                      </svg>
+                      Message
+                    </a>
                   </div>
                 </div>
               ))}
@@ -342,7 +362,9 @@ export default function LeadsPage() {
                       <tr key={lead.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div>
-                            <div className="text-sm font-medium text-gray-900">{lead.name}</div>
+                            <Link href={`/dashboard/leads/${lead.id}`}>
+                              <div className="text-sm font-medium text-gray-900 hover:text-blue-600">{lead.name}</div>
+                            </Link>
                             <div className="text-sm text-gray-500">{lead.email}</div>
                             <div className="text-sm text-gray-500">{lead.phone}</div>
                           </div>
@@ -354,18 +376,37 @@ export default function LeadsPage() {
                           )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          {getTemperatureBadge((lead as any).temperature || 'WARM')}
+                          <select
+                            value={(lead as any).temperature || 'WARM'}
+                            onChange={(e) => handleTemperatureChange(lead.id, e.target.value)}
+                            className="px-3 py-1 text-xs border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-semibold"
+                            style={{
+                              backgroundColor: (lead as any).temperature === 'HOT' ? '#fee2e2' : 
+                                             (lead as any).temperature === 'COLD' ? '#dbeafe' : '#fef3c7',
+                              color: (lead as any).temperature === 'HOT' ? '#991b1b' : 
+                                     (lead as any).temperature === 'COLD' ? '#1e40af' : '#92400e'
+                            }}
+                          >
+                            <option value="HOT">🔥 HOT</option>
+                            <option value="WARM">🟡 WARM</option>
+                            <option value="COLD">❄️ COLD</option>
+                          </select>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDate(lead.created_at)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                          <Link
-                            href={`/dashboard/leads/${lead.id}`}
-                            className="text-blue-600 hover:text-blue-900 font-semibold"
+                          <a
+                            href={getMessengerLink(lead.phone, lead.name)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold"
                           >
-                            View Details
-                          </Link>
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M12 2C6.477 2 2 6.145 2 11.243c0 2.896 1.428 5.48 3.657 7.238v3.519l3.358-1.844c.896.247 1.847.384 2.828.384 5.523 0 10-4.145 10-9.243C22 6.145 17.523 2 12 2zm.96 12.428l-2.54-2.71-4.96 2.71 5.46-5.8 2.6 2.71 4.9-2.71-5.46 5.8z"/>
+                            </svg>
+                            Message
+                          </a>
                         </td>
                       </tr>
                     ))}
