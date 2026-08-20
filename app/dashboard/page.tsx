@@ -115,10 +115,7 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <div className="h-8 w-8 sm:h-9 sm:w-9 bg-[#1877F2] rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
-                <span className="text-white font-bold text-lg sm:text-xl">P</span>
-              </div>
-              <h1 className="text-lg sm:text-xl font-bold text-[#1877F2] truncate">
+              <h1 className="text-2xl font-bold text-black truncate">
                 Prospecta
               </h1>
             </div>
