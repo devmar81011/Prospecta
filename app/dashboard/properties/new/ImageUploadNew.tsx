@@ -35,6 +35,12 @@ export default function ImageUploadNew({ onImagesSelected, existingImages }: Ima
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
 
+    // Check 4-image limit
+    if (previews.length + files.length > 4) {
+      alert('⚠️ Maximum 4 photos allowed. Please remove some images first.')
+      return
+    }
+
     setUploading(true)
     try {
       // Optimize all images
@@ -101,7 +107,7 @@ export default function ImageUploadNew({ onImagesSelected, existingImages }: Ima
             />
           </label>
           <span className="text-sm text-gray-500">
-            Images auto-optimized to save storage ✨
+            Max 4 photos • Auto-optimized to save storage ✨
           </span>
         </div>
       </div>

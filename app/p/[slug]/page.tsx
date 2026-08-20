@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import type { Property, PropertyAttribute, PropertyImage, Profile } from '@/lib/types/database'
 import LeadCaptureForm from './LeadCaptureForm'
+import DemoPropertyView from './DemoPropertyView'
 
 async function getPropertyBySlug(slug: string) {
   const supabase = await createClient()
@@ -58,6 +59,17 @@ function getPropertyTypeLabel(type: string): string {
 
 export default async function PublicPropertyPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
+  
+  // Return both demo and real views - client will decide which to show
+  return (
+    <>
+      <DemoPropertyView slug={slug} />
+      <RealPropertyView slug={slug} />
+    </>
+  )
+}
+
+async function RealPropertyView({ slug }: { slug: string }) {
   const property = await getPropertyBySlug(slug)
 
   if (!property) {

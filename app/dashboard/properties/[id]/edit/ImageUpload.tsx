@@ -32,6 +32,11 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
         throw new Error('You must select at least one image to upload.')
       }
 
+      // Check 4-image limit
+      if (existingImages.length + event.target.files.length > 4) {
+        throw new Error('⚠️ Maximum 4 photos allowed. Please remove some images first.')
+      }
+
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
@@ -202,7 +207,7 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
           />
         </label>
         <p className="mt-2 text-xs text-gray-500">
-          Images automatically optimized to max 1MB each ✨ Upload multiple files at once
+          Max 4 photos • Auto-optimized to max 1MB each ✨
         </p>
       </div>
 
