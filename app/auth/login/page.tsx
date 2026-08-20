@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { setDemoMode } from '@/lib/demo-auth'
@@ -38,11 +39,17 @@ export default function LoginPage() {
       <div className="max-w-md w-full">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            <div className="mx-auto h-16 w-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mb-4">
-              <span className="text-4xl">🏠</span>
+            <div className="mx-auto mb-6 flex items-center justify-center">
+              <Image 
+                src="/prospecta-logo.svg" 
+                alt="Prospecta" 
+                width={200} 
+                height={45}
+                className="h-10 w-auto"
+              />
             </div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome to Prospecta
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Welcome Back
             </h2>
             <p className="text-sm text-gray-600">
               Sign in with Facebook to manage your properties and leads
