@@ -111,27 +111,27 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white">🏠</span>
+      <nav className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-14 sm:h-16">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="h-8 w-8 sm:h-9 sm:w-9 bg-[#1877F2] rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                <span className="text-white font-bold text-lg sm:text-xl">P</span>
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <h1 className="text-lg sm:text-xl font-bold text-[#1877F2] truncate">
                 Prospecta
               </h1>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-2 sm:gap-3">
               {isDemoMode() && (
-                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
-                  DEMO MODE
+                <span className="hidden xs:inline-flex text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-semibold">
+                  DEMO
                 </span>
               )}
-              <span className="text-sm text-gray-700">{userEmail}</span>
+              <span className="hidden sm:block text-sm text-gray-700 truncate max-w-[150px]">{userEmail}</span>
               <button
                 onClick={handleSignOut}
-                className="text-sm text-blue-600 hover:text-blue-800"
+                className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-medium px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
               >
                 Sign out
               </button>
@@ -140,12 +140,12 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Good day, {profile?.display_name || profile?.full_name || 'Agent'} 👋
+      <main className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">
+            Hello, {profile?.display_name || profile?.full_name || 'Agent'}! 👋
           </h2>
-          <p className="text-gray-600">Welcome to your dashboard</p>
+          <p className="text-sm sm:text-base text-gray-600">Welcome to your dashboard</p>
         </div>
 
         {!profile?.display_name && !isDemoMode() && (
@@ -159,43 +159,43 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow p-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">New Leads</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.newLeadsCount}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">New Leads</p>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{stats.newLeadsCount}</p>
               </div>
-              <div className="bg-blue-100 rounded-full p-3">
-                <svg className="h-8 w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-blue-100 rounded-full p-2 sm:p-3">
+                <svg className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Today's Viewings</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.todayViewingsCount}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Today's Viewings</p>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{stats.todayViewingsCount}</p>
               </div>
-              <div className="bg-green-100 rounded-full p-3">
-                <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-green-100 rounded-full p-2 sm:p-3">
+                <svg className="h-6 w-6 sm:h-8 sm:w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white rounded-lg shadow-sm border p-4 sm:p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Properties</p>
-                <p className="text-3xl font-bold text-gray-900 mt-2">{stats.activePropertiesCount}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Active Properties</p>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{stats.activePropertiesCount}</p>
               </div>
-              <div className="bg-purple-100 rounded-full p-3">
-                <svg className="h-8 w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="bg-purple-100 rounded-full p-2 sm:p-3">
+                <svg className="h-6 w-6 sm:h-8 sm:w-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </div>
@@ -203,37 +203,37 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Link 
             href="/dashboard/properties" 
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
+            className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 hover:shadow-md transition-shadow"
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">📋 My Properties</h3>
-            <p className="text-sm text-gray-600">Manage your property listings</p>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">📋 Properties</h3>
+            <p className="text-xs sm:text-sm text-gray-600">Manage listings</p>
           </Link>
 
           <Link 
             href="/dashboard/leads" 
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
+            className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 hover:shadow-md transition-shadow"
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">👥 Leads</h3>
-            <p className="text-sm text-gray-600">Track and manage your leads</p>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">👥 Leads</h3>
+            <p className="text-xs sm:text-sm text-gray-600">Track inquiries</p>
           </Link>
 
           <Link 
             href="/dashboard/viewings" 
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
+            className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 hover:shadow-md transition-shadow"
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">📅 Viewings</h3>
-            <p className="text-sm text-gray-600">Scheduled property viewings</p>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">📅 Viewings</h3>
+            <p className="text-xs sm:text-sm text-gray-600">View schedule</p>
           </Link>
 
           <Link 
             href="/dashboard/profile" 
-            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
+            className="bg-white rounded-lg shadow-sm border p-4 sm:p-6 hover:shadow-md transition-shadow"
           >
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">⚙️ Profile</h3>
-            <p className="text-sm text-gray-600">Edit your profile settings</p>
+            <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">⚙️ Profile</h3>
+            <p className="text-xs sm:text-sm text-gray-600">Edit settings</p>
           </Link>
         </div>
       </main>
