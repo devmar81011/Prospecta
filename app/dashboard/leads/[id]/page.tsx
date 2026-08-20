@@ -15,32 +15,22 @@ interface Lead {
   phone: string
   message?: string
   status: string
+  temperature?: string
+  notes?: string
   created_at: string
 }
 
-function getStatusBadge(status: string) {
-  const badges: Record<string, { bg: string; text: string }> = {
-    new: { bg: 'bg-orange-100', text: 'text-orange-800' },
-    contacted: { bg: 'bg-blue-100', text: 'text-blue-800' },
-    qualified: { bg: 'bg-green-100', text: 'text-green-800' },
-    viewing: { bg: 'bg-purple-100', text: 'text-purple-800' },
-    negotiating: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-    reserved: { bg: 'bg-teal-100', text: 'text-teal-800' },
-    sold: { bg: 'bg-emerald-100', text: 'text-emerald-800' },
-    lost: { bg: 'bg-gray-100', text: 'text-gray-800' },
-    NEW: { bg: 'bg-orange-100', text: 'text-orange-800' },
-    CONTACTED: { bg: 'bg-blue-100', text: 'text-blue-800' },
-    INTERESTED: { bg: 'bg-green-100', text: 'text-green-800' },
-    VIEWING: { bg: 'bg-purple-100', text: 'text-purple-800' },
-    NEGOTIATING: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-    RESERVED: { bg: 'bg-teal-100', text: 'text-teal-800' },
-    SOLD: { bg: 'bg-emerald-100', text: 'text-emerald-800' },
-    NOT_INTERESTED: { bg: 'bg-gray-100', text: 'text-gray-800' },
+function getTemperatureBadge(temp: string) {
+  const badges: Record<string, { bg: string; text: string; icon: string }> = {
+    HOT: { bg: 'bg-red-100', text: 'text-red-800', icon: '🔥' },
+    WARM: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: '🟡' },
+    COLD: { bg: 'bg-blue-100', text: 'text-blue-800', icon: '❄️' },
   }
-  const badge = badges[status] || badges.new
+  const badge = badges[temp] || badges.WARM
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text} uppercase`}>
-      {status.replace('_', ' ')}
+    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text} uppercase`}>
+      <span>{badge.icon}</span>
+      {temp}
     </span>
   )
 }
