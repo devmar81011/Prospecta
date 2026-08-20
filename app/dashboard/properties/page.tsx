@@ -157,7 +157,7 @@ export default function PropertiesPage() {
             href="/dashboard/properties/new"
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-sm"
           >
-            + New Property
+            + Add Property
           </Link>
         </div>
 
@@ -182,35 +182,82 @@ export default function PropertiesPage() {
                 {/* Property Images Grid */}
                 <div className="relative">
                   {property.images && property.images.length > 0 ? (
-                    <div className={`grid gap-1 ${
-                      property.images.length === 1 ? 'grid-cols-1' :
-                      property.images.length === 2 ? 'grid-cols-2' :
-                      property.images.length === 3 ? 'grid-cols-3' :
-                      'grid-cols-2'
-                    }`}>
-                      {property.images.slice(0, 4).map((img: any, idx: number) => (
-                        <div 
-                          key={idx} 
-                          className={`relative bg-gray-200 ${
-                            property.images!.length === 1 ? 'col-span-1 h-64' :
-                            property.images!.length === 2 ? 'col-span-1 h-48' :
-                            property.images!.length === 3 ? (idx === 0 ? 'col-span-3 h-48' : 'col-span-1 h-32') :
-                            (idx === 0 ? 'col-span-2 h-48' : 'col-span-1 h-32')
-                          }`}
-                        >
+                    <>
+                      {/* 1 Photo: Full width */}
+                      {property.images.length === 1 && (
+                        <div className="h-64 bg-gray-200">
                           <img
-                            src={img.url || img}
-                            alt={`${property.title} - Photo ${idx + 1}`}
+                            src={property.images[0].url || property.images[0]}
+                            alt={property.title}
                             className="w-full h-full object-cover"
                           />
-                          {idx === 3 && property.images && property.images.length > 4 && (
-                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-semibold">
-                              +{property.images.length - 4} more
-                            </div>
-                          )}
                         </div>
-                      ))}
-                    </div>
+                      )}
+
+                      {/* 2 Photos: Side by side equal */}
+                      {property.images.length === 2 && (
+                        <div className="grid grid-cols-2 gap-1">
+                          {property.images.map((img: any, idx: number) => (
+                            <div key={idx} className="h-48 bg-gray-200">
+                              <img
+                                src={img.url || img}
+                                alt={`${property.title} - Photo ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 3 Photos: 1 large left, 2 stacked right */}
+                      {property.images.length === 3 && (
+                        <div className="grid grid-cols-2 gap-1 h-64">
+                          <div className="bg-gray-200">
+                            <img
+                              src={property.images[0].url || property.images[0]}
+                              alt={`${property.title} - Photo 1`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="grid grid-rows-2 gap-1">
+                            <div className="bg-gray-200">
+                              <img
+                                src={property.images[1].url || property.images[1]}
+                                alt={`${property.title} - Photo 2`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="bg-gray-200">
+                              <img
+                                src={property.images[2].url || property.images[2]}
+                                alt={`${property.title} - Photo 3`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 4 Photos: 2x2 grid */}
+                      {property.images.length >= 4 && (
+                        <div className="grid grid-cols-2 gap-1">
+                          {property.images.slice(0, 4).map((img: any, idx: number) => (
+                            <div key={idx} className="relative h-32 bg-gray-200">
+                              <img
+                                src={img.url || img}
+                                alt={`${property.title} - Photo ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                              {idx === 3 && property.images && property.images.length > 4 && (
+                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white font-semibold">
+                                  +{property.images.length - 4} more
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <div className="h-48 bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center text-6xl">
                       {property.property_type === 'house' || property.property_type === 'HOUSE_LOT' ? '🏠' : '🏢'}
