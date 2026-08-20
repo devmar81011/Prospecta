@@ -9,6 +9,7 @@ import ImageUpload from './ImageUpload'
 const PROPERTY_TYPES: { value: PropertyType; label: string; emoji: string }[] = [
   { value: 'HOUSE_LOT', label: 'House & Lot', emoji: '🏠' },
   { value: 'CONDOMINIUM', label: 'Condominium', emoji: '🏢' },
+  { value: 'APARTMENT', label: 'Apartment', emoji: '🏘️' },
   { value: 'LOT_ONLY', label: 'Lot Only', emoji: '🌳' },
   { value: 'COMMERCIAL', label: 'Commercial', emoji: '🏬' },
   { value: 'OTHER', label: 'Other', emoji: '➕' },
@@ -29,6 +30,13 @@ const SUGGESTED_ATTRIBUTES: Record<PropertyType, { label: string; unit?: string 
     { label: 'Floor Area', unit: 'sqm' },
     { label: 'Floor Number' },
     { label: 'Furnishing' },
+  ],
+  APARTMENT: [
+    { label: 'Bedrooms' },
+    { label: 'Bathrooms' },
+    { label: 'Floor Number' },
+    { label: 'Unit Number' },
+    { label: 'Floor Area', unit: 'sqm' },
   ],
   LOT_ONLY: [
     { label: 'Lot Area', unit: 'sqm' },
