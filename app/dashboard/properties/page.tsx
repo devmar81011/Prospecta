@@ -133,7 +133,7 @@ export default function PropertiesPage() {
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">My Properties</h1>
-            <p className="text-sm text-gray-600 mt-1">Manage your property listings</p>
+            <p className="text-sm text-gray-600 mt-1">Create listings and share them on Facebook to capture leads</p>
           </div>
           <Link
             href="/dashboard/properties/new"
@@ -196,22 +196,54 @@ export default function PropertiesPage() {
                     )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="space-y-2">
                     <Link
                       href={`/dashboard/properties/${property.id}/edit`}
-                      className="flex-1 text-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                      className="block w-full text-center px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
                     >
-                      Edit
+                      ✏️ Edit Property
                     </Link>
                     {property.status === 'available' || property.status === 'ACTIVE' ? (
-                      <Link
-                        href={`/p/${property.slug}`}
-                        target="_blank"
-                        className="flex-1 text-center px-3 py-2 border border-blue-600 rounded-lg text-sm font-medium text-blue-600 hover:bg-blue-50 transition-colors"
-                      >
-                        View
-                      </Link>
-                    ) : null}
+                      <>
+                        <Link
+                          href={`/p/${property.slug}`}
+                          target="_blank"
+                          className="block w-full text-center px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+                        >
+                          👁️ Preview Page
+                        </Link>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              const url = `${window.location.origin}/p/${property.slug}`
+                              const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
+                              window.open(fbUrl, '_blank', 'width=600,height=400')
+                            }}
+                            className="flex-1 px-3 py-2 bg-[#1877F2] text-white rounded-lg text-sm font-medium hover:bg-[#166fe5] transition-colors flex items-center justify-center gap-1"
+                          >
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                            </svg>
+                            Share
+                          </button>
+                          <button
+                            onClick={() => {
+                              const url = `${window.location.origin}/p/${property.slug}`
+                              navigator.clipboard.writeText(url)
+                              alert('✅ Link copied! Now paste it on Facebook.')
+                            }}
+                            className="px-3 py-2 border-2 border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+                            title="Copy link"
+                          >
+                            📋
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center text-xs text-gray-500 py-2">
+                        Set status to "Active" to share
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
