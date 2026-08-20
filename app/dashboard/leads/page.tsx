@@ -14,32 +14,21 @@ interface Lead {
   phone: string
   message?: string
   status: string
+  temperature?: string
   created_at: string
 }
 
-function getStatusBadge(status: string) {
-  const badges: Record<string, { bg: string; text: string }> = {
-    new: { bg: 'bg-orange-100', text: 'text-orange-800' },
-    contacted: { bg: 'bg-blue-100', text: 'text-blue-800' },
-    qualified: { bg: 'bg-green-100', text: 'text-green-800' },
-    viewing: { bg: 'bg-purple-100', text: 'text-purple-800' },
-    negotiating: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-    reserved: { bg: 'bg-teal-100', text: 'text-teal-800' },
-    sold: { bg: 'bg-green-100', text: 'text-green-800' },
-    lost: { bg: 'bg-gray-100', text: 'text-gray-800' },
-    NEW: { bg: 'bg-orange-100', text: 'text-orange-800' },
-    CONTACTED: { bg: 'bg-blue-100', text: 'text-blue-800' },
-    INTERESTED: { bg: 'bg-green-100', text: 'text-green-800' },
-    VIEWING: { bg: 'bg-purple-100', text: 'text-purple-800' },
-    NEGOTIATING: { bg: 'bg-yellow-100', text: 'text-yellow-800' },
-    RESERVED: { bg: 'bg-teal-100', text: 'text-teal-800' },
-    SOLD: { bg: 'bg-emerald-100', text: 'text-emerald-800' },
-    NOT_INTERESTED: { bg: 'bg-gray-100', text: 'text-gray-800' },
+function getTemperatureBadge(temp: string) {
+  const badges: Record<string, { bg: string; text: string; icon: string }> = {
+    HOT: { bg: 'bg-red-100', text: 'text-red-800', icon: '🔥' },
+    WARM: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: '🟡' },
+    COLD: { bg: 'bg-blue-100', text: 'text-blue-800', icon: '❄️' },
   }
-  const badge = badges[status] || badges.new
+  const badge = badges[temp] || badges.WARM
   return (
-    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text} uppercase`}>
-      {status.replace('_', ' ')}
+    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${badge.bg} ${badge.text} uppercase`}>
+      <span>{badge.icon}</span>
+      {temp}
     </span>
   )
 }
@@ -74,6 +63,13 @@ export default function LeadsPage() {
       if (isDemoMode()) {
         // Load demo leads
         setLeads(DEMO_LEADS as any)
+        
+        // Calculate temperature stats
+        const hot = DEMO_LEADS.filter(l => (l as any).temperature === 'HOT').length
+        const warm = DEMO_LEADS.filter(l => (l as any).temperature === 'WARM').length
+        const cold = DEMO_LEADS.filter(l => (l as any).temperature === 'COLD').length
+        setTemperatureStats({ hot, warm, cold, total: DEMO_LEADS.length })
+        
         setLoading(false)
       } else {
         // Load real leads from Supabase
@@ -95,6 +91,12 @@ export default function LeadsPage() {
           ...lead,
           property_title: lead.property?.title || 'Unknown Property'
         }))
+
+        // Calculate temperature stats
+        const hot = formattedLeads.filter((l: any) => l.temperature === 'HOT').length
+        const warm = formattedLeads.filter((l: any) => l.temperature === 'WARM').length
+        const cold = formattedLeads.filter((l: any) => l.temperature === 'COLD').length
+        setTemperatureStats({ hot, warm, cold, total: formattedLeads.length })
 
         setLeads(formattedLeads)
         setLoading(false)
@@ -144,6 +146,66 @@ export default function LeadsPage() {
         <div className="mb-6">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Leads</h1>
           <p className="text-sm text-gray-600 mt-1">Manage your property inquiries and leads</p>
+        </div>
+
+        {/* Temperature Stats Dashboard */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Total Leads */}
+          <div className="bg-white rounded-lg shadow-sm border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Leads</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">{temperatureStats.total}</p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Hot Leads */}
+          <div className="bg-white rounded-lg shadow-sm border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">🔥 Hot Leads</p>
+                <p className="text-2xl font-bold text-red-600 mt-1">{temperatureStats.hot}</p>
+                <p className="text-xs text-gray-500 mt-1">Ready to buy</p>
+              </div>
+              <div className="p-3 bg-red-100 rounded-lg">
+                <span className="text-2xl">🔥</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Warm Leads */}
+          <div className="bg-white rounded-lg shadow-sm border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">🟡 Warm Leads</p>
+                <p className="text-2xl font-bold text-yellow-600 mt-1">{temperatureStats.warm}</p>
+                <p className="text-xs text-gray-500 mt-1">Interested</p>
+              </div>
+              <div className="p-3 bg-yellow-100 rounded-lg">
+                <span className="text-2xl">🟡</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Cold Leads */}
+          <div className="bg-white rounded-lg shadow-sm border p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">❄️ Cold Leads</p>
+                <p className="text-2xl font-bold text-blue-600 mt-1">{temperatureStats.cold}</p>
+                <p className="text-xs text-gray-500 mt-1">Browsing</p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <span className="text-2xl">❄️</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {leads.length === 0 ? (
