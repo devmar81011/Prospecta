@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import type { PropertyType, PropertyStatus } from '@/lib/types/database'
+import ImageUploadNew from './ImageUploadNew'
 
 const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
   { value: 'HOUSE_LOT', label: 'House & Lot' },
@@ -59,6 +60,7 @@ export default function NewPropertyPage() {
     parking: '',
     floors: '',
   })
+  const [selectedImages, setSelectedImages] = useState<File[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -75,7 +77,8 @@ export default function NewPropertyPage() {
 
       const slug = generateSlug(property.title)
 
-      const { data, error } = await supabase
+      // Create property first
+      const { data, error: propertyError } = await supabase
         .from('properties')
         .insert([
           {
@@ -93,9 +96,77 @@ export default function NewPropertyPage() {
         .select()
         .single()
 
-      if (error) throw error
+      if (propertyError) throw propertyError
 
-      router.push(`/dashboard/properties/${data.id}/edit`)
+      // Upload images if any
+      if (selectedImages.length > 0) {
+        for (let i = 0; i < selectedImages.length; i++) {
+          const file = selectedImages[i]
+          const fileExt = file.name.split('.').pop()
+          const fileName = `${data.id}/${Date.now()}-${i}.${fileExt}`
+
+          // Upload to Supabase Storage
+          const { error: uploadError } = await supabase.storage
+            .from('property-images')
+            .upload(fileName, file)
+
+          if (uploadError) {
+            console.error('Image upload error:', uploadError)
+            continue
+          }
+
+          // Get public URL
+          const { data: { publicUrl } } = supabase.storage
+            .from('property-images')
+            .getPublicUrl(fileName)
+
+          // Save image record
+          await supabase.from('property_images').insert({
+            property_id: data.id,
+            image_url: publicUrl,
+            storage_path: fileName,
+            sort_order: i,
+            is_cover: i === 0, // First image is cover by default
+          })
+        }
+      }
+
+      // Add dynamic attributes
+      const attributes = []
+      for (const field of dynamicFields) {
+        const value = (property as any)[field]
+        if (value) {
+          const labels: Record<string, string> = {
+            bedrooms: 'Bedrooms',
+            bathrooms: 'Bathrooms',
+            garage: 'Garage Spaces',
+            lotArea: 'Lot Area',
+            floorArea: 'Floor Area',
+            floorNumber: 'Floor Number',
+            unitNumber: 'Unit Number',
+            parkingSlots: 'Parking Slots',
+            titleType: 'Title Type',
+            parking: 'Parking Spaces',
+            floors: 'Number of Floors',
+          }
+          const units: Record<string, string> = {
+            lotArea: 'sqm',
+            floorArea: 'sqm',
+          }
+          attributes.push({
+            property_id: data.id,
+            label: labels[field],
+            value: value.toString(),
+            unit: units[field] || null,
+          })
+        }
+      }
+
+      if (attributes.length > 0) {
+        await supabase.from('property_attributes').insert(attributes)
+      }
+
+      router.push(`/dashboard/properties`)
       router.refresh()
     } catch (err: any) {
       setError(err.message || 'Failed to create property')
@@ -232,6 +303,12 @@ export default function NewPropertyPage() {
                   {dynamicFields.map((field) => renderDynamicField(field))}
                 </div>
               )}
+
+              {/* Image Upload Component */}
+              <ImageUploadNew 
+                onImagesSelected={setSelectedImages}
+                existingImages={selectedImages}
+              />
 
               <div>
                 <label htmlFor="price" className="block text-sm font-medium text-gray-700">

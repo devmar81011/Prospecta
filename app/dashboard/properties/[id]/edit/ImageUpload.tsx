@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
+import imageCompression from 'browser-image-compression'
 
 interface ImageUploadProps {
   propertyId: string
@@ -41,20 +42,36 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
         if (!file.type.startsWith('image/')) {
           throw new Error(`${file.name} is not an image file`)
         }
-        if (file.size > 5 * 1024 * 1024) {
-          throw new Error(`${file.name} is too large. Max size is 5MB`)
-        }
+        // Removed 5MB limit since we're optimizing now
       }
 
-      // Upload each file
+      // Optimize and upload each file
       for (let i = 0; i < files.length; i++) {
         const file = files[i]
-        const fileExt = file.name.split('.').pop()
+        
+        // Optimize image before uploading
+        const options = {
+          maxSizeMB: 1, // Max 1MB per image
+          maxWidthOrHeight: 1920, // Max dimension
+          useWebWorker: true,
+          fileType: 'image/jpeg', // Convert to JPEG for better compression
+        }
+
+        let optimizedFile: File
+        try {
+          optimizedFile = await imageCompression(file, options)
+          console.log(`✨ ${file.name}: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(optimizedFile.size / 1024 / 1024).toFixed(2)}MB`)
+        } catch (compressionError) {
+          console.error('Compression failed, using original:', compressionError)
+          optimizedFile = file
+        }
+        
+        const fileExt = optimizedFile.name.split('.').pop()
         const fileName = `${user.id}/${propertyId}/${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
 
         const { error: uploadError, data } = await supabase.storage
           .from('property-images')
-          .upload(fileName, file)
+          .upload(fileName, optimizedFile)
 
         if (uploadError) throw uploadError
 
@@ -185,7 +202,7 @@ export default function ImageUpload({ propertyId, existingImages, onImagesUpdate
           />
         </label>
         <p className="mt-2 text-xs text-gray-500">
-          Upload images (max 5MB each, multiple files supported)
+          Images automatically optimized to max 1MB each ✨ Upload multiple files at once
         </p>
       </div>
 

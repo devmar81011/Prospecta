@@ -9,11 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.48.1",
+    "browser-image-compression": "^2.0.2",
     "next": "^15.1.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@supabase/supabase-js": "^2.48.1",
-    "@supabase/ssr": "^0.5.2"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@types/node": "^22",
