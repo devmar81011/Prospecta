@@ -185,7 +185,7 @@ export default function PropertiesPage() {
                     <>
                       {/* 1 Photo: Full width */}
                       {property.images.length === 1 && (
-                        <div className="h-64 bg-gray-200">
+                        <div className="h-48 bg-gray-200">
                           <img
                             src={property.images[0].url || property.images[0]}
                             alt={property.title}
@@ -211,23 +211,23 @@ export default function PropertiesPage() {
 
                       {/* 3 Photos: 1 large left, 2 stacked right */}
                       {property.images.length === 3 && (
-                        <div className="grid grid-cols-2 gap-1 h-64">
-                          <div className="bg-gray-200">
+                        <div className="grid grid-cols-2 gap-1 h-48">
+                          <div className="bg-gray-200 h-full">
                             <img
                               src={property.images[0].url || property.images[0]}
                               alt={`${property.title} - Photo 1`}
                               className="w-full h-full object-cover"
                             />
                           </div>
-                          <div className="grid grid-rows-2 gap-1">
-                            <div className="bg-gray-200">
+                          <div className="flex flex-col gap-1 h-full">
+                            <div className="bg-gray-200 flex-1">
                               <img
                                 src={property.images[1].url || property.images[1]}
                                 alt={`${property.title} - Photo 2`}
                                 className="w-full h-full object-cover"
                               />
                             </div>
-                            <div className="bg-gray-200">
+                            <div className="bg-gray-200 flex-1">
                               <img
                                 src={property.images[2].url || property.images[2]}
                                 alt={`${property.title} - Photo 3`}
@@ -240,9 +240,9 @@ export default function PropertiesPage() {
 
                       {/* 4 Photos: 2x2 grid */}
                       {property.images.length >= 4 && (
-                        <div className="grid grid-cols-2 gap-1">
+                        <div className="grid grid-cols-2 gap-1 h-48">
                           {property.images.slice(0, 4).map((img: any, idx: number) => (
-                            <div key={idx} className="relative h-32 bg-gray-200">
+                            <div key={idx} className="relative bg-gray-200 h-24">
                               <img
                                 src={img.url || img}
                                 alt={`${property.title} - Photo ${idx + 1}`}
