@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   title: "Prospecta - Real Estate Lead App",
   description: "Facebook-first PWA for real estate agents to manage properties and leads.",
   manifest: "/manifest.json",
-  themeColor: "#0066FF",
+  themeColor: "#1a1a1a",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -39,7 +39,7 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/favicon.svg" />
-        <meta name="theme-color" content="#0066FF" />
+        <meta name="theme-color" content="#1a1a1a" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>

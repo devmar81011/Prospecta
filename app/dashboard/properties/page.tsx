@@ -178,9 +178,9 @@ export default function PropertiesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {properties.map((property) => (
-              <div key={property.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow">
-                {/* Property Images Grid */}
-                <div className="relative">
+              <div key={property.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+                {/* Property Images Grid - Fixed Height 192px */}
+                <div className="relative h-48">
                   {property.images && property.images.length > 0 ? (
                     <>
                       {/* 1 Photo: Full width */}
@@ -278,11 +278,11 @@ export default function PropertiesPage() {
                   )}
                 </div>
                 
-                {/* Property Info */}
-                <div className="p-4">
+                {/* Property Info - Flexible but controlled */}
+                <div className="p-4 flex flex-col flex-1">
                   <div className="flex justify-between items-start mb-2">
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-2">
+                      <h3 className="text-base font-semibold text-gray-900 mb-1 line-clamp-2 min-h-[2.5rem]">
                         {property.title}
                       </h3>
                       <p className="text-xs text-gray-500">
@@ -292,7 +292,7 @@ export default function PropertiesPage() {
                     <div className="ml-2 flex-shrink-0">{getStatusBadge(property.status)}</div>
                   </div>
 
-                  <div className="space-y-1.5 mb-3">
+                  <div className="space-y-1.5 mb-3 flex-1">
                     <div className="flex items-baseline gap-1">
                       <span className="font-bold text-[#1877F2] text-lg">
                         {formatPrice(property.price)}
@@ -306,7 +306,7 @@ export default function PropertiesPage() {
                       <span className="truncate">{property.location}</span>
                     </div>
                     {(property.bedrooms || property.bathrooms || property.area) && (
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-gray-600 pt-1">
+                      <div className="flex flex-wrap items-center gap-3 text-xs text-gray-600 pt-1 min-h-[2rem]">
                         {property.bedrooms && (
                           <div className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded">
                             <svg className="w-3.5 h-3.5 text-[#1877F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
