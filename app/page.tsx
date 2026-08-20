@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 
 export default function Home() {
   const [showVideo, setShowVideo] = useState(false)
@@ -11,13 +12,14 @@ export default function Home() {
       <nav className="border-b border-gray-200 bg-white/95 backdrop-blur-md sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 sm:h-10 sm:w-10 bg-[#1877F2] rounded-full flex items-center justify-center shadow-md">
-                <span className="text-white text-xl sm:text-2xl font-bold">P</span>
-              </div>
-              <span className="text-xl sm:text-2xl font-bold text-[#1877F2]">
-                Prospecta
-              </span>
+            <div className="flex items-center">
+              <Image 
+                src="/prospecta-logo.svg" 
+                alt="Prospecta" 
+                width={140} 
+                height={32}
+                className="h-7 w-auto sm:h-8"
+              />
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <a href="/auth/login" className="text-gray-700 hover:text-gray-900 font-semibold text-sm sm:text-base px-3 sm:px-4 py-2">
