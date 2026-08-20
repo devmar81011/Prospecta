@@ -58,7 +58,61 @@ export default function LeadsPage() {
     total: 0
   })
 
-  useEffect(() => {
+  const handleTemperatureChange = async (leadId: string, newTemp: string) => {
+    if (isDemoMode()) {
+      // Update in demo mode
+      setLeads(leads.map(l => 
+        l.id === leadId ? { ...l, temperature: newTemp } as any : l
+      ))
+      
+      // Recalculate stats
+      const updatedLeads = leads.map(l => 
+        l.id === leadId ? { ...l, temperature: newTemp } as any : l
+      )
+      const hot = updatedLeads.filter((l: any) => l.temperature === 'HOT').length
+      const warm = updatedLeads.filter((l: any) => l.temperature === 'WARM').length
+      const cold = updatedLeads.filter((l: any) => l.temperature === 'COLD').length
+      setTemperatureStats({ hot, warm, cold, total: updatedLeads.length })
+    } else {
+      // Update in Supabase
+      const supabase = createClient()
+      await supabase
+        .from('leads')
+        .update({ temperature: newTemp })
+        .eq('id', leadId)
+      
+      // Refresh leads
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      
+      const { data } = await supabase
+        .from('leads')
+        .select(`
+          *,
+          property:properties(title, location)
+        `)
+        .eq('agent_id', user.id)
+        .order('created_at', { ascending: false })
+
+      const formattedLeads = (data || []).map((lead: any) => ({
+        ...lead,
+        property_title: lead.property?.title || 'Unknown Property'
+      }))
+
+      const hot = formattedLeads.filter((l: any) => l.temperature === 'HOT').length
+      const warm = formattedLeads.filter((l: any) => l.temperature === 'WARM').length
+      const cold = formattedLeads.filter((l: any) => l.temperature === 'COLD').length
+      setTemperatureStats({ hot, warm, cold, total: formattedLeads.length })
+
+      setLeads(formattedLeads)
+    }
+  }
+
+  const getMessengerLink = (phone: string, name: string) => {
+    // For demo, we'll use a generic messenger link
+    // In production, you'd need the user's Facebook ID or phone number registered with Messenger
+    return `https://m.me/${phone.replace(/\D/g, '')}`
+  }
     async function loadLeads() {
       if (isDemoMode()) {
         // Load demo leads
