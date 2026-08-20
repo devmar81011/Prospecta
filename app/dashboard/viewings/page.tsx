@@ -152,22 +152,25 @@ export default function ViewingsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="h-8 w-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
-                <span className="text-white">🏠</span>
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-14 sm:h-16">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="h-8 w-8 sm:h-9 sm:w-9 bg-[#1877F2] rounded-full flex items-center justify-center flex-shrink-0 shadow-sm">
+                <span className="text-white font-bold text-lg sm:text-xl">P</span>
               </div>
-              <Link href="/dashboard" className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              <Link href="/dashboard" className="text-lg sm:text-xl font-bold text-[#1877F2] truncate">
                 Prospecta
               </Link>
             </div>
             <div className="flex items-center">
               <Link
                 href="/dashboard"
-                className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+                className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 font-medium px-2 sm:px-3 py-1.5 sm:py-2 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors"
               >
-                ← Back to Dashboard
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                <span className="hidden sm:inline">Back</span>
               </Link>
             </div>
           </div>
