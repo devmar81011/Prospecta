@@ -1,13 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { setDemoMode } from '@/lib/demo-auth'
 
-export default function LoginPage() {
+function LoginForm() {
+  const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(searchParams.get('error'))
   const router = useRouter()
   const supabase = createClient()
 
@@ -24,6 +25,7 @@ export default function LoginPage() {
         provider: 'facebook',
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
+          scopes: 'email,public_profile',
         },
       })
       if (error) throw error
@@ -57,7 +59,6 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Facebook Login Button */}
           <button
             type="button"
             onClick={handleFacebookLogin}
@@ -79,7 +80,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Demo Mode Button */}
           <button
             type="button"
             onClick={handleDemoLogin}
@@ -101,5 +101,19 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   )
 }
