@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy - Prospecta',
@@ -55,11 +56,11 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-xl font-semibold text-gray-900">Your choices</h2>
           <p className="mt-2">
-            You can update your profile in the dashboard. To delete your
+            You can update your profile in the dashboard.             To delete your
             account and related data, follow the instructions on our{' '}
-            <a className="text-blue-600 underline" href="/data-deletion">
+            <Link className="text-blue-600 underline" href="/data-deletion">
               Data deletion
-            </a>{' '}
+            </Link>{' '}
             page.
           </p>
         </section>
