@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { isDemoMode, DEMO_LEADS } from '@/lib/demo-auth'
+import BrandLogo from '@/components/BrandLogo'
 
 interface Lead {
   id: string
@@ -153,9 +154,7 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
       <nav className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
-            <Link href="/dashboard/leads" className="text-2xl font-bold text-black">
-              Prospecta
-            </Link>
+            <BrandLogo href="/dashboard/leads" size="sm" />
             <Link
               href="/dashboard/leads"
               className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 font-medium px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-md"

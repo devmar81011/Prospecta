@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { isDemoMode, DEMO_PROPERTIES } from '@/lib/demo-auth'
+import BrandLogo from '@/components/BrandLogo'
 
 interface Property {
   id: string
@@ -122,11 +123,7 @@ export default function PropertiesPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Link href="/dashboard" className="flex items-center">
-                <span className="text-2xl font-bold text-gray-900">
-                  Prospecta
-                </span>
-              </Link>
+              <BrandLogo href="/dashboard" size="sm" />
             </div>
             <div className="flex items-center">
               <Link

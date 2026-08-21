@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { isDemoMode, getDemoUser, DEMO_LEADS, DEMO_PROPERTIES, DEMO_VIEWINGS } from '@/lib/demo-auth'
 import { setDemoMode } from '@/lib/demo-auth'
 import { useRouter } from 'next/navigation'
+import BrandLogo from '@/components/BrandLogo'
 
 interface Profile {
   display_name?: string
@@ -115,9 +116,7 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <h1 className="text-2xl font-bold text-black truncate">
-                Prospecta
-              </h1>
+              <BrandLogo href="/dashboard" size="sm" />
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               {isDemoMode() && (

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { isDemoMode, DEMO_LEADS } from '@/lib/demo-auth'
+import BrandLogo from '@/components/BrandLogo'
 
 interface Lead {
   id: string
@@ -183,9 +184,7 @@ export default function LeadsPage() {
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center gap-2 min-w-0 flex-1">
-              <Link href="/dashboard" className="text-2xl font-bold text-black truncate">
-                Prospecta
-              </Link>
+              <BrandLogo href="/dashboard" size="sm" />
             </div>
             <div className="flex items-center">
               <Link

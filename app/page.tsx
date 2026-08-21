@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import BrandLogo from '@/components/BrandLogo'
 
 export default function Home() {
   const [showVideo, setShowVideo] = useState(false)
@@ -12,16 +13,14 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-14 sm:h-16">
             <div className="flex items-center">
-              <span className="text-2xl sm:text-3xl font-extrabold text-black">
-                Prospecta
-              </span>
+              <BrandLogo href="/" size="md" />
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <a href="/auth/login" className="text-gray-700 hover:text-gray-900 font-semibold text-sm sm:text-base px-3 sm:px-4 py-2">
                 Sign In
               </a>
               <a
-                href="/auth/login"
+                href="/auth/signup"
                 className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base font-bold rounded-lg text-white bg-[#1877F2] hover:bg-[#166fe5] shadow-md transition-all"
               >
                 Get Started
@@ -51,7 +50,7 @@ export default function Home() {
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-8 sm:mb-12 px-4">
               <a
-                href="/auth/login"
+                href="/auth/signup"
                 className="inline-flex items-center justify-center px-8 py-3 sm:py-4 text-base sm:text-lg font-bold rounded-lg text-white bg-[#1877F2] hover:bg-[#166fe5] shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all"
               >
                 Start Free Trial

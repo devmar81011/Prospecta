@@ -1,12 +1,16 @@
 'use client'
 
 import { Suspense, useState } from 'react'
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { setDemoMode } from '@/lib/demo-auth'
+import BrandLogo from '@/components/BrandLogo'
 
 function LoginForm() {
   const searchParams = useSearchParams()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(searchParams.get('error'))
   const router = useRouter()
@@ -18,19 +22,21 @@ function LoginForm() {
     router.push('/dashboard')
   }
 
-  const handleFacebookLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
     try {
-      setLoading(true)
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          scopes: 'email,public_profile',
-        },
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       })
       if (error) throw error
+      router.push('/dashboard')
+      router.refresh()
     } catch (err: any) {
-      setError(err.message || 'Failed to login with Facebook')
+      setError(err.message || 'Failed to sign in')
       setLoading(false)
     }
   }
@@ -41,15 +47,13 @@ function LoginForm() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <div className="mx-auto mb-6 flex items-center justify-center">
-              <span className="text-4xl font-bold text-gray-900">
-                Prospecta
-              </span>
+              <BrandLogo size="lg" />
             </div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               Welcome Back
             </h2>
             <p className="text-sm text-gray-600">
-              Sign in with Facebook to manage your properties and leads
+              Sign in with your email to manage properties and leads
             </p>
           </div>
 
@@ -59,17 +63,56 @@ function LoginForm() {
             </div>
           )}
 
-          <button
-            type="button"
-            onClick={handleFacebookLogin}
-            disabled={loading}
-            className="w-full flex items-center justify-center px-6 py-4 bg-[#1877F2] hover:bg-[#166fe5] text-white rounded-xl shadow-lg hover:shadow-xl transition-all font-semibold text-base disabled:opacity-50 disabled:cursor-not-allowed mb-4"
-          >
-            <svg className="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-            {loading ? 'Connecting...' : 'Continue with Facebook'}
-          </button>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                Email address
+              </label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                Password
+              </label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center py-3 px-4 rounded-lg shadow-sm text-sm font-semibold text-white bg-[#1877F2] hover:bg-[#166fe5] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {loading ? 'Signing in...' : 'Sign in'}
+            </button>
+          </form>
+
+          <p className="mt-4 text-center text-sm text-gray-600">
+            New to Prospecta?{' '}
+            <Link href="/auth/signup" className="font-semibold text-blue-600 hover:text-blue-500">
+              Create an account
+            </Link>
+          </p>
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
@@ -85,19 +128,19 @@ function LoginForm() {
             onClick={handleDemoLogin}
             className="w-full flex items-center justify-center px-6 py-3 border-2 border-blue-600 rounded-xl text-blue-600 hover:bg-blue-50 transition-all font-semibold"
           >
-            🎮 Try Demo Account
+            Try Demo Account
           </button>
-
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-xs text-blue-900 font-semibold mb-1">💡 Why Facebook Login?</p>
-            <p className="text-xs text-blue-700">
-              Prospecta is built for agents who get leads from Facebook. Connect your Facebook account to share properties and capture leads automatically.
-            </p>
-          </div>
         </div>
 
         <p className="mt-6 text-center text-xs text-gray-500">
-          By signing in, you agree to our Terms of Service and Privacy Policy
+          By signing in, you agree to our{' '}
+          <Link href="/terms" className="underline">
+            Terms of Service
+          </Link>{' '}
+          and{' '}
+          <Link href="/privacy" className="underline">
+            Privacy Policy
+          </Link>
         </p>
       </div>
     </div>
