@@ -74,7 +74,9 @@ export default function LeadDetailPage({ params }: { params: Promise<{ id: strin
         if (data) {
           setLead({
             ...data,
-            property_title: data.property?.title || 'Unknown Property'
+            property_title: data.property?.title || 'Unknown Property',
+            phone: data.phone || data.phone_number,
+            email: data.email || '',
           })
           setTemperature(data.temperature || 'WARM')
           setNotes(data.notes || '')

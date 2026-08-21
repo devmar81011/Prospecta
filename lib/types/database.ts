@@ -21,6 +21,7 @@ export type Property = {
   title: string;
   slug: string;
   property_type: PropertyType;
+  listing_type: 'FOR_SALE' | 'FOR_RENT';
   price: number;
   currency: string;
   location: string;
@@ -66,9 +67,12 @@ export type Lead = {
   property_id: string;
   name: string;
   phone_number: string;
+  email: string | null;
   message: string | null;
   source: LeadSource;
   status: LeadStatus;
+  temperature: 'HOT' | 'WARM' | 'COLD';
+  notes: string | null;
   created_at: string;
   updated_at: string;
 }

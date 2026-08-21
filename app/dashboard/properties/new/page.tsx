@@ -86,6 +86,7 @@ export default function NewPropertyPage() {
             title: property.title,
             slug,
             property_type: property.property_type,
+            listing_type: property.listing_type,
             price: parseFloat(property.price),
             currency: 'PHP',
             location: property.location,
@@ -103,7 +104,7 @@ export default function NewPropertyPage() {
         for (let i = 0; i < selectedImages.length; i++) {
           const file = selectedImages[i]
           const fileExt = file.name.split('.').pop()
-          const fileName = `${data.id}/${Date.now()}-${i}.${fileExt}`
+          const fileName = `${user.id}/${data.id}/${Date.now()}-${i}.${fileExt}`
 
           // Upload to Supabase Storage
           const { error: uploadError } = await supabase.storage

@@ -86,7 +86,8 @@ export default function ViewingsPage() {
         const formattedViewings = (data || []).map((viewing: any) => ({
           ...viewing,
           property_title: viewing.property?.title || 'Unknown Property',
-          client_name: viewing.lead?.name || 'Unknown Client'
+          client_name: viewing.lead?.name || 'Unknown Client',
+          scheduled_date: viewing.scheduled_date || viewing.scheduled_at,
         }))
 
         setViewings(formattedViewings)

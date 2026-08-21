@@ -5,9 +5,12 @@ CREATE TABLE IF NOT EXISTS leads (
   property_id UUID NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   phone_number TEXT NOT NULL,
+  email TEXT,
   message TEXT,
   source TEXT DEFAULT 'DIRECT' CHECK (source IN ('FACEBOOK', 'DIRECT', 'OTHER')),
   status TEXT DEFAULT 'NEW' CHECK (status IN ('NEW', 'CONTACTED', 'INTERESTED', 'VIEWING', 'NEGOTIATING', 'RESERVED', 'SOLD', 'NOT_INTERESTED')),
+  temperature TEXT DEFAULT 'WARM' CHECK (temperature IN ('HOT', 'WARM', 'COLD')),
+  notes TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

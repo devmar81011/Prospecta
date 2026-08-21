@@ -96,7 +96,9 @@ export default function LeadsPage() {
 
       const formattedLeads = (data || []).map((lead: any) => ({
         ...lead,
-        property_title: lead.property?.title || 'Unknown Property'
+        property_title: lead.property?.title || 'Unknown Property',
+        phone: lead.phone || lead.phone_number,
+        email: lead.email || '',
       }))
 
       const hot = formattedLeads.filter((l: any) => l.temperature === 'HOT').length
@@ -145,7 +147,9 @@ export default function LeadsPage() {
 
         const formattedLeads = (data || []).map((lead: any) => ({
           ...lead,
-          property_title: lead.property?.title || 'Unknown Property'
+          property_title: lead.property?.title || 'Unknown Property',
+          phone: lead.phone || lead.phone_number,
+          email: lead.email || '',
         }))
 
         // Calculate temperature stats
